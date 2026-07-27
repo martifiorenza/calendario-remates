@@ -57,6 +57,8 @@ const PROV_LIST = ["Santa Fe","Entre Ríos","Córdoba","Corrientes","Misiones"];
 const GRUPOS = ["e-Brangus","AFA","Pastore","Charles","Lehmann","Rosgan","Exposiciones"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+const SUCURSALES = ["AVELLANEDA","CAÑADA DE GOMEZ","CARLOS PELLEGRINI","CERES","CHAJARI","CONCORDIA","LA PAZ","MERCEDES","MORTEROS","OBERA","PARANA","SAN JUSTO","TOTORAS","VICTORIA"];
+const EVENT_SUCURSALES = {"eb-001":["MERCEDES"],"eb-002":["MERCEDES"],"eb-003":["MORTEROS"],"eb-005":["MERCEDES"],"eb-006":["LA PAZ"],"eb-007":["SAN JUSTO"],"eb-008":["PARANA"],"eb-009":["MERCEDES"],"eb-010":["CERES"],"eb-013":["MORTEROS"],"eb-014":["PARANA"],"eb-016":["CONCORDIA"],"eb-017":["MERCEDES"],"eb-018":["AVELLANEDA"],"eb-018b":["MERCEDES"],"eb-019":["MERCEDES"],"eb-020":["SAN JUSTO"],"eb-021":["MERCEDES"],"eb-022":["SAN JUSTO"],"eb-024":["MERCEDES"],"eb-025":["MERCEDES"],"eb-026":["SAN JUSTO"],"eb-027":["MERCEDES"],"eb-029":["CERES"],"eb-030":["MERCEDES"],"eb-032":["SAN JUSTO"],"eb-033":["AVELLANEDA"],"eb-034":["SAN JUSTO"],"eb-035":["MORTEROS"],"eb-037":["CERES"],"eb-038":["PARANA"],"eb-039":["CERES"],"eb-040":["AVELLANEDA"],"eb-041":["CERES"],"eb-042":["MERCEDES"],"eb-043":["SAN JUSTO"],"eb-045":["MERCEDES"],"eb-046":["AVELLANEDA"],"afa-c01":["TOTORAS"],"afa-c02":["TOTORAS"],"afa-c04":["TOTORAS"],"afa-c06":["CARLOS PELLEGRINI"],"afa-t01":["TOTORAS"],"afa-t02":["TOTORAS"],"afa-t03":["TOTORAS"],"afa-t04":["TOTORAS"],"afa-t05":["TOTORAS"],"afa-t06":["TOTORAS"],"afa-t07":["TOTORAS"],"afa-t08":["TOTORAS"],"afa-r01":["CARLOS PELLEGRINI"],"afa-r02":["CARLOS PELLEGRINI"],"afa-r03":["CARLOS PELLEGRINI"],"pas-01":["CARLOS PELLEGRINI"],"pas-02":["CARLOS PELLEGRINI"],"pas-03":["CARLOS PELLEGRINI"],"pas-04":["CARLOS PELLEGRINI"],"pas-05":["CARLOS PELLEGRINI"],"pas-06":["CARLOS PELLEGRINI"],"pas-07":["CARLOS PELLEGRINI"],"pas-08":["CARLOS PELLEGRINI"],"pas-09":["CARLOS PELLEGRINI"],"cha-01":["CARLOS PELLEGRINI"],"cha-02":["CARLOS PELLEGRINI"],"leh-emi-08a":["SAN JUSTO"],"leh-sdo-08":["SAN JUSTO"],"leh-sua-08":["MORTEROS"],"leh-rom-08":["AVELLANEDA"],"leh-hel-08":["SAN JUSTO"],"leh-fel-08":["SAN JUSTO"],"leh-emi-08b":["SAN JUSTO"],"leh-cen-09":["CAÑADA DE GOMEZ"],"leh-cen-10":["CAÑADA DE GOMEZ"],"leh-cen-11":["CAÑADA DE GOMEZ"],"leh-cen-12":["CAÑADA DE GOMEZ"],"exp-villaguay":["PARANA"],"exp-villaguay-0801":["PARANA"],"exp-villaguay-0802":["PARANA"],"exp-recon":["AVELLANEDA"],"exp-recon-0808":["AVELLANEDA"],"exp-recon-0809":["AVELLANEDA"],"exp-felic":["LA PAZ"],"exp-felic-0809":["LA PAZ"],"exp-feder":["CONCORDIA"],"exp-feder-0814":["CONCORDIA"],"exp-feder-0815":["CONCORDIA"],"exp-feder-0816":["CONCORDIA"],"exp-nogoya":["VICTORIA"],"exp-nogoya-0815":["VICTORIA"],"exp-nogoya-0816":["VICTORIA"],"exp-sanju":["SAN JUSTO"],"exp-hasenkamp":["LA PAZ"],"exp-hasenkamp-0823":["LA PAZ"],"exp-merce":["MERCEDES"],"exp-vera":["AVELLANEDA"],"exp-goya":["MERCEDES"],"exp-conco":["CONCORDIA"],"exp-chaja":["CHAJARI"]};
 
 function parseFecha(f){ const [y,m,d]=f.split("-").map(Number); return new Date(y,m-1,d); }
 function formatFecha(r){
@@ -98,72 +100,15 @@ function calendarLinks(r){
     outlook:`https://outlook.live.com/calendar/0/deeplink/compose?${oq}`
   };
 }
-function zoneName(f){
-  const raw=(f.properties && (f.properties.name || f.properties.Name || f.properties.NOMBRE || f.properties.sucursal)) || "Sucursal sin nombre";
-  const name=String(raw).trim();
-  if(name.toUpperCase()==="PARANA NUEVO") return "PARANA";
-  if(name.toUpperCase()==="CONCORDIA NUEVO") return "CONCORDIA";
-  return name;
-}
-function pointInRing(point, ring){
-  const [x,y]=point;
-  let inside=false;
-  for(let i=0,j=ring.length-1;i<ring.length;j=i++){
-    const xi=ring[i][0], yi=ring[i][1];
-    const xj=ring[j][0], yj=ring[j][1];
-    const intersect=((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi);
-    if(intersect) inside=!inside;
-  }
-  return inside;
-}
-function pointInPolygon(point, rings){
-  if(!rings || !rings.length || !pointInRing(point,rings[0])) return false;
-  return !rings.slice(1).some(ring=>pointInRing(point,ring));
-}
-function pointInFeature(point, feature){
-  const geom=feature && feature.geometry;
-  if(!geom) return false;
-  if(geom.type==="Polygon") return pointInPolygon(point,geom.coordinates);
-  if(geom.type==="MultiPolygon") return geom.coordinates.some(poly=>pointInPolygon(point,poly));
-  return false;
-}
-function sucursalesEvento(r, zonas){
-  if(typeof r.lat!=="number" || typeof r.lng!=="number") return [];
-  const point=[r.lng,r.lat];
-  return [...new Set(zonas.filter(z=>pointInFeature(point,z)).map(zoneName))];
-}
-function simplifyRing(ring, maxPoints=180){
-  if(!ring || ring.length<=maxPoints) return ring;
-  const step=Math.ceil(ring.length/maxPoints);
-  const out=ring.filter((_,i)=>i%step===0);
-  const last=ring[ring.length-1];
-  if(out[out.length-1]!==last) out.push(last);
-  return out;
-}
-function simplifyFeature(feature){
-  const geom=feature && feature.geometry;
-  if(!geom) return feature;
-  const base={...feature, properties:{...feature.properties}};
-  if(geom.type==="Polygon"){
-    base.geometry={...geom, coordinates:geom.coordinates.map(r=>simplifyRing(r))};
-  }else if(geom.type==="MultiPolygon"){
-    base.geometry={...geom, coordinates:geom.coordinates.map(poly=>poly.map(r=>simplifyRing(r)))};
-  }
-  return base;
-}
-
 function App(){
   const [REMATES,setRemates]=useState(null);
-  const [ZONAS,setZonas]=useState([]);
-  const [ZONAS_MAP,setZonasMap]=useState([]);
-  const [eventSucursales,setEventSucursales]=useState({});
   const [loadErr,setLoadErr]=useState(null);
   const [vista,setVista]=useState("calendario");
   const [mesIdx,setMesIdx]=useState(6);
   const [fGrupos,setFGrupos]=useState(new Set(GRUPOS));
   const [fProvs,setFProvs]=useState(new Set(PROV_LIST));
   const [fTipos,setFTipos]=useState(new Set());
-  const [fSucursales,setFSucursales]=useState(new Set());
+  const [fSucursales,setFSucursales]=useState(new Set(SUCURSALES));
   const [soloConfirmados,setSoloConfirmados]=useState(false);
   const [sel,setSel]=useState(null);
 
@@ -179,25 +124,6 @@ function App(){
       .catch(e=>setLoadErr(e.message));
   },[]);
 
-  useEffect(()=>{
-    fetch("sucursales.geojson?v="+Date.now())
-      .then(r=>r.ok?r.json():null)
-      .then(data=>{
-        const zonas=data && Array.isArray(data.features) ? data.features.filter(f=>f.geometry) : [];
-        setZonas(zonas);
-        setZonasMap(zonas.map(simplifyFeature));
-        setFSucursales(new Set(zonas.map(zoneName)));
-      })
-      .catch(()=>{});
-  },[]);
-
-  useEffect(()=>{
-    if(!REMATES || !ZONAS.length){ setEventSucursales({}); return; }
-    const next={};
-    REMATES.forEach(r=>{ next[r.id]=sucursalesEvento(r,ZONAS); });
-    setEventSucursales(next);
-  },[REMATES,ZONAS]);
-
   if(loadErr) return (
     <div className="loadwrap">
       <div className="errbox">
@@ -212,10 +138,10 @@ function App(){
 
   const TIPOS=[...new Set(REMATES.map(r=>r.tipo))].sort();
 
-  const sucursalNames=[...new Set(ZONAS.map(zoneName))].sort();
+  const sucursalNames=SUCURSALES;
   const todasSucursales=sucursalNames.length===0 || fSucursales.size===sucursalNames.length;
   const filtrados = REMATES.filter(r => {
-    const pasaSucursal = todasSucursales || (eventSucursales[r.id]||[]).some(s=>fSucursales.has(s));
+    const pasaSucursal = todasSucursales || (EVENT_SUCURSALES[r.id]||[]).some(s=>fSucursales.has(s));
     return fGrupos.has(r.grupo) && fProvs.has(r.prov) && fTipos.has(r.tipo) &&
       (!soloConfirmados || r.confianza==="confirmado") && pasaSucursal;
   });
@@ -323,7 +249,7 @@ function App(){
 
           {vista==="mapa" && (
             <div style={S.mapaWrap}>
-              <LeafletMap porLoc={porLoc} zonas={ZONAS_MAP} fSucursales={fSucursales} setSel={setSel}/>
+              <LeafletMap porLoc={porLoc} setSel={setSel}/>
             </div>
           )}
         </main>
@@ -340,7 +266,7 @@ function App(){
               <Field k="Fecha" v={formatFecha(sel)}/>
               <Field k="Hora" v={horaEvento(sel)}/>
               <Field k="Localidad" v={`${sel.loc}, ${sel.prov}`}/>
-              {ZONAS.length>0 && <Field k="Sucursal / zona" v={(eventSucursales[sel.id]||[]).join(", ") || "Fuera de zona"}/>} 
+              <Field k="Sucursal / zona" v={(EVENT_SUCURSALES[sel.id]||[]).join(", ") || "Fuera de zona"}/>
               <Field k="Firma / mercado" v={sel.firma}/>
               <Field k="Modalidad" v={sel.modalidad}/>
               <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
@@ -407,13 +333,11 @@ function CalendarButtons({evento}){
   );
 }
 
-function LeafletMap({porLoc,zonas,fSucursales,setSel}){
+function LeafletMap({porLoc,setSel}){
   const el=useRef(null);
   const mapRef=useRef(null);
   const markersRef=useRef(null);
-  const zonesRef=useRef(null);
   const locKey=porLoc.map(g=>`${g.loc}:${g.items.length}:${g.items.map(r=>r.id).join(",")}`).join("|");
-  const zoneKey=zonas.map(zoneName).join("|")+":"+[...fSucursales].sort().join("|");
 
   useEffect(()=>()=>{
     if(mapRef.current){
@@ -425,34 +349,19 @@ function LeafletMap({porLoc,zonas,fSucursales,setSel}){
   useEffect(()=>{
     if(!el.current || !window.L) return;
     if(!mapRef.current){
-      const map=window.L.map(el.current, { scrollWheelZoom:false }).setView([-31.3,-60.6], 6);
+      const map=window.L.map(el.current, { scrollWheelZoom:false, preferCanvas:true }).setView([-31.3,-60.6], 6);
       window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
       mapRef.current=map;
-      zonesRef.current=window.L.layerGroup().addTo(map);
       markersRef.current=window.L.layerGroup().addTo(map);
     }
 
     const map=mapRef.current;
-    const zoneLayer=zonesRef.current;
     const layer=markersRef.current;
-    zoneLayer.clearLayers();
     layer.clearLayers();
     const bounds=[];
-    const zoneBounds=[];
-    const allSelected=!zonas.length || fSucursales.size===new Set(zonas.map(zoneName)).size;
-    zonas.forEach(z=>{
-      const name=zoneName(z);
-      if(allSelected || !fSucursales.has(name)) return;
-      const zone=window.L.geoJSON(z, {
-        style:{ color:"#166534", weight:1.5, fillColor:"#86efac", fillOpacity:0.18 }
-      }).bindTooltip(name, { sticky:true });
-      zone.addTo(zoneLayer);
-      const zBounds=zone.getBounds();
-      if(zBounds.isValid()) zoneBounds.push(zBounds.getSouthWest(), zBounds.getNorthEast());
-    });
     porLoc.forEach(g=>{
       if(typeof g.lat!=="number" || typeof g.lng!=="number") return;
       const first=g.items[0];
@@ -466,9 +375,8 @@ function LeafletMap({porLoc,zonas,fSucursales,setSel}){
       bounds.push([g.lat,g.lng]);
     });
     if(bounds.length) map.fitBounds(bounds, { padding:[28,28], maxZoom:8 });
-    else if(zoneBounds.length) map.fitBounds(zoneBounds, { padding:[28,28], maxZoom:8 });
     setTimeout(()=>map.invalidateSize(), 0);
-  }, [locKey,zoneKey,setSel]);
+  }, [locKey,setSel]);
 
   if(!window.L) return <div style={S.mapFallback}>No se pudo cargar Leaflet. Revisá la conexión y recargá la página.</div>;
   return <div ref={el} style={S.leafletMap} aria-label="Mapa de localidades"/>;
