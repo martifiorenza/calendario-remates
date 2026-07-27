@@ -1,4 +1,4 @@
-# Calendario de remates ganaderos 2026 — Litoral y Centro
+# Calendario de remates ganaderos 2026
 
 Calendario interactivo de remates ganaderos y exposiciones rurales en Santa Fe, Entre Ríos, Córdoba, Corrientes y Misiones. Vista de calendario, lista y mapa, con filtros por firma, provincia y tipo de hacienda.
 

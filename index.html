@@ -3,18 +3,24 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Remates ganaderos 2026 — Litoral y Centro</title>
+<title>Remates ganaderos 2026</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23dcfce7'/%3E%3Cpath d='M18 18c-5 0-8 3-8 7 0 3 2 5 5 6-1 4 0 10 4 13 3 3 7 4 13 4s10-1 13-4c4-3 5-9 4-13 3-1 5-3 5-6 0-4-3-7-8-7-3 0-5 1-7 3-2-1-4-2-7-2s-5 1-7 2c-2-2-4-3-7-3z' fill='%23fff' stroke='%23166534' stroke-width='3'/%3E%3Cpath d='M23 22c-3 0-6 2-6 6 0 2 1 4 3 5 2-3 5-6 9-8-1-2-3-3-6-3zM41 22c3 0 6 2 6 6 0 2-1 4-3 5-2-3-5-6-9-8 1-2 3-3 6-3z' fill='%23171717'/%3E%3Ccircle cx='25' cy='34' r='3' fill='%23171717'/%3E%3Ccircle cx='39' cy='34' r='3' fill='%23171717'/%3E%3Cellipse cx='32' cy='43' rx='10' ry='7' fill='%23fecaca'/%3E%3Ccircle cx='28' cy='43' r='1.7' fill='%237f1d1d'/%3E%3Ccircle cx='36' cy='43' r='1.7' fill='%237f1d1d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQnLL3kRZVpE8GyKcN6EKN0t2ATmI0M=" crossorigin="" />
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-  html,body{margin:0;padding:0;background:#F7F4ED;}
+  html,body{margin:0;padding:0;background:#DCFCE7;}
   #root{min-height:100vh;}
   .chip:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 2px 6px #0001}
-  .evt:hover{background:#f0ebe0 !important}
+  .evt:hover{background:#ecfdf5 !important}
   .rowitem:hover{box-shadow:0 2px 10px #0001;transform:translateY(-1px);transition:all .12s}
+  .leaflet-container{font-family:'Inter',system-ui,sans-serif;}
+  .map-pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;border:2px solid #fff;box-shadow:0 4px 14px #0003;}
+  .leaflet-popup-content{margin:10px 12px;font-size:12px;line-height:1.35;}
   *{box-sizing:border-box}
   .loadwrap{display:flex;align-items:center;justify-content:center;height:100vh;
     font-family:'Inter',system-ui,sans-serif;color:#888;font-size:15px;flex-direction:column;gap:14px}
@@ -31,7 +37,7 @@
 </div>
 
 <script type="text/plain" id="app-src">
-const { useState, useMemo, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 const rootEl = document.getElementById("root");
 function showFatal(msg){
@@ -54,12 +60,44 @@ const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto"
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
 
 function parseFecha(f){ const [y,m,d]=f.split("-").map(Number); return new Date(y,m-1,d); }
-
-const MAP = { latMin:-34.0, latMax:-27.0, lngMin:-65.0, lngMax:-57.5, w:340, h:440 };
-function proj(lat,lng){
-  const x=((lng-MAP.lngMin)/(MAP.lngMax-MAP.lngMin))*MAP.w;
-  const y=((MAP.latMax-lat)/(MAP.latMax-MAP.latMin))*MAP.h;
-  return [x,y];
+function formatFecha(r){
+  const dt=parseFecha(r.fecha);
+  return `${dt.getDate()} de ${MESES[dt.getMonth()]} 2026`;
+}
+function horaEvento(r){ return r.hora && r.hora !== "00:00" ? `${r.hora} h` : "Hora a confirmar"; }
+function pad(n){ return String(n).padStart(2,"0"); }
+function addDays(dt,days){ const n=new Date(dt); n.setDate(n.getDate()+days); return n; }
+function addHours(dt,hours){ const n=new Date(dt); n.setHours(n.getHours()+hours); return n; }
+function compactDate(dt){ return `${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}`; }
+function compactDateTime(dt){ return `${compactDate(dt)}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`; }
+function localDate(dt){ return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`; }
+function isoLocal(dt){ return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`; }
+function calendarLinks(r){
+  const start=parseFecha(r.fecha);
+  const title=`${r.cabana} - ${r.loc}`;
+  const details=`${r.tipo}\n${r.firma}\nModalidad: ${r.modalidad}\nFuente: ${r.fuente}`;
+  const location=`${r.loc}, ${r.prov}`;
+  let googleDates, outlookStart, outlookEnd, allDay;
+  if(r.hora && r.hora !== "00:00"){
+    const [hh,mm]=r.hora.split(":").map(Number);
+    start.setHours(hh,mm,0,0);
+    const end=addHours(start,2);
+    googleDates=`${compactDateTime(start)}/${compactDateTime(end)}`;
+    outlookStart=isoLocal(start);
+    outlookEnd=isoLocal(end);
+    allDay="false";
+  }else{
+    googleDates=`${compactDate(start)}/${compactDate(addDays(start,1))}`;
+    outlookStart=localDate(start);
+    outlookEnd=localDate(addDays(start,1));
+    allDay="true";
+  }
+  const q=new URLSearchParams({action:"TEMPLATE",text:title,dates:googleDates,details,location}).toString();
+  const oq=new URLSearchParams({rru:"addevent",subject:title,startdt:outlookStart,enddt:outlookEnd,allday:allDay,body:details,location}).toString();
+  return {
+    google:`https://calendar.google.com/calendar/render?${q}`,
+    outlook:`https://outlook.live.com/calendar/0/deeplink/compose?${oq}`
+  };
 }
 
 function App(){
@@ -129,7 +167,7 @@ function App(){
     <div style={S.root}>
       <header style={S.header}>
         <div>
-          <div style={S.kicker}>CAMPAÑA 2026 · LITORAL Y CENTRO</div>
+          <div style={S.kicker}>CAMPAÑA 2026</div>
           <h1 style={S.h1}>Calendario de remates ganaderos</h1>
           <p style={S.sub}>{filtrados.length} eventos en pantalla · {totalConfirmados} con fecha confirmada ·
             Santa&nbsp;Fe, Entre&nbsp;Ríos, Córdoba, Corrientes, Misiones</p>
@@ -184,6 +222,7 @@ function App(){
                             <button key={r.id} onClick={()=>setSel(r)} className="evt"
                               style={{...S.evt,borderLeft:`3px solid ${GRUPO_COLOR[r.grupo]}`,opacity:r.confianza==="estimado"?0.72:1}}>
                               <span style={S.evtLoc}>{r.loc}</span>
+                              <span style={S.evtHora}>{horaEvento(r)}</span>
                               <span style={S.evtFirma}>{r.grupo}{r.confianza==="estimado"?" ·~":""}</span>
                             </button>
                           ))}
@@ -207,7 +246,7 @@ function App(){
                   </div>
                   <div style={{flex:1,textAlign:"left"}}>
                     <div style={S.rowTitle}>{r.cabana}</div>
-                    <div style={S.rowMeta}><b>{r.loc}</b>, {r.prov} · {r.firma}{r.hora?` · ${r.hora}`:""}</div>
+                    <div style={S.rowMeta}><b>{r.loc}</b>, {r.prov} · {horaEvento(r)} · {r.firma}</div>
                   </div>
                   <div style={S.rowTags}>
                     <span style={{...S.tag,background:GRUPO_COLOR[r.grupo]+"22",color:GRUPO_COLOR[r.grupo]}}>{r.tipo}</span>
@@ -222,28 +261,10 @@ function App(){
 
           {vista==="mapa" && (
             <div style={S.mapaWrap}>
-              <svg viewBox={`0 0 ${MAP.w} ${MAP.h}`} style={S.svg} role="img" aria-label="Mapa de localidades">
-                <rect x="0" y="0" width={MAP.w} height={MAP.h} fill="#EDE7DA" rx="10"/>
-                {[-33,-31,-29].map(la=>{const [,y]=proj(la,-60);return <line key={la} x1="0" y1={y} x2={MAP.w} y2={y} stroke="#0002" strokeDasharray="2 5"/>;})}
-                {porLoc.map(g=>{
-                  const [x,y]=proj(g.lat,g.lng);
-                  const col=GRUPO_COLOR[g.items[0].grupo];
-                  const rad=Math.min(6+g.items.length*1.6,16);
-                  const hov=hoverLoc===g.loc;
-                  return (
-                    <g key={g.loc} transform={`translate(${x},${y})`}
-                       onMouseEnter={()=>setHoverLoc(g.loc)} onMouseLeave={()=>setHoverLoc(null)}
-                       onClick={()=>setSel(g.items[0])} style={{cursor:"pointer"}}>
-                      <circle r={rad} fill={col} fillOpacity={hov?0.9:0.55} stroke="#fff" strokeWidth="1.5"/>
-                      <text y="4" textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff">{g.items.length}</text>
-                      {hov && <text y={-rad-4} textAnchor="middle" fontSize="11" fontWeight="700" fill="#1a1a1a">{g.loc}</text>}
-                    </g>
-                  );
-                })}
-              </svg>
+              <LeafletMap porLoc={porLoc} setSel={setSel}/>
               <div style={S.mapList}>
                 <div style={S.mapListTitle}>Localidades ({porLoc.length})</div>
-                {porLoc.sort((a,b)=>b.items.length-a.items.length).map(g=>(
+                {[...porLoc].sort((a,b)=>b.items.length-a.items.length).map(g=>(
                   <button key={g.loc} className="rowitem"
                     onMouseEnter={()=>setHoverLoc(g.loc)} onMouseLeave={()=>setHoverLoc(null)}
                     onClick={()=>setSel(g.items[0])}
@@ -267,13 +288,15 @@ function App(){
             <div style={S.modalTipo}>{sel.tipo}</div>
             <h3 style={S.modalTitle}>{sel.cabana}</h3>
             <div style={S.modalGrid}>
-              <Field k="Fecha" v={`${parseFecha(sel.fecha).getDate()} de ${MESES[parseFecha(sel.fecha).getMonth()]} 2026${sel.hora?` · ${sel.hora} h`:""}`}/>
+              <Field k="Fecha" v={formatFecha(sel)}/>
+              <Field k="Hora" v={horaEvento(sel)}/>
               <Field k="Localidad" v={`${sel.loc}, ${sel.prov}`}/>
               <Field k="Firma / mercado" v={sel.firma}/>
               <Field k="Modalidad" v={sel.modalidad}/>
               <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
               <Field k="Fuente" v={sel.fuente}/>
             </div>
+            <CalendarButtons evento={sel}/>
           </div>
         </div>
       )}
@@ -293,10 +316,69 @@ function Chip({on,onClick,label,color,disabled}){
 }
 function Field({k,v}){return <div><div style={S.fieldK}>{k}</div><div style={S.fieldV}>{v}</div></div>;}
 
+function CalendarButtons({evento}){
+  const links=calendarLinks(evento);
+  return (
+    <div style={S.calendarActions}>
+      <a href={links.google} target="_blank" rel="noopener noreferrer" style={S.calendarBtn}>Agregar a Google</a>
+      <a href={links.outlook} target="_blank" rel="noopener noreferrer" style={S.calendarBtnAlt}>Agregar a Outlook</a>
+    </div>
+  );
+}
+
+function LeafletMap({porLoc,setSel}){
+  const el=useRef(null);
+  const mapRef=useRef(null);
+  const markersRef=useRef(null);
+  const locKey=porLoc.map(g=>`${g.loc}:${g.items.length}:${g.items.map(r=>r.id).join(",")}`).join("|");
+
+  useEffect(()=>()=>{
+    if(mapRef.current){
+      mapRef.current.remove();
+      mapRef.current=null;
+    }
+  },[]);
+
+  useEffect(()=>{
+    if(!el.current || !window.L) return;
+    if(!mapRef.current){
+      const map=window.L.map(el.current, { scrollWheelZoom:false }).setView([-31.3,-60.6], 6);
+      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      mapRef.current=map;
+      markersRef.current=window.L.layerGroup().addTo(map);
+    }
+
+    const map=mapRef.current;
+    const layer=markersRef.current;
+    layer.clearLayers();
+    const bounds=[];
+    porLoc.forEach(g=>{
+      if(typeof g.lat!=="number" || typeof g.lng!=="number") return;
+      const first=g.items[0];
+      const color=GRUPO_COLOR[first.grupo] || "#166534";
+      const html=`<div class="map-pin" style="background:${color}">${g.items.length}</div>`;
+      const icon=window.L.divIcon({ html, className:"", iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-14] });
+      const popup=`<b>${g.loc}, ${g.prov}</b><br>${g.items.slice(0,6).map(r=>`${formatFecha(r)} · ${horaEvento(r)} · ${r.cabana}`).join("<br>")}${g.items.length>6?"<br>...":""}`;
+      const marker=window.L.marker([g.lat,g.lng], { icon }).bindPopup(popup);
+      marker.on("click",()=>setSel(first));
+      marker.addTo(layer);
+      bounds.push([g.lat,g.lng]);
+    });
+    if(bounds.length) map.fitBounds(bounds, { padding:[28,28], maxZoom:8 });
+    setTimeout(()=>map.invalidateSize(), 0);
+  }, [locKey,setSel]);
+
+  if(!window.L) return <div style={S.mapFallback}>No se pudo cargar Leaflet. Revisá la conexión y recargá la página.</div>;
+  return <div ref={el} style={S.leafletMap} aria-label="Mapa de localidades"/>;
+}
+
 const S = {
-  root:{fontFamily:"'Inter',system-ui,sans-serif",background:"#F7F4ED",color:"#1a1a1a",minHeight:"100vh"},
-  header:{display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16,padding:"26px 28px 18px",borderBottom:"1px solid #0001",background:"#F7F4ED",position:"sticky",top:0,zIndex:5},
-  kicker:{fontSize:11,letterSpacing:"0.18em",fontWeight:700,color:"#B45309",marginBottom:6},
+  root:{fontFamily:"'Inter',system-ui,sans-serif",background:"#DCFCE7",color:"#1a1a1a",minHeight:"100vh"},
+  header:{display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16,padding:"26px 28px 18px",borderBottom:"1px solid #0001",background:"#DCFCE7",position:"sticky",top:0,zIndex:5},
+  kicker:{fontSize:11,letterSpacing:"0.18em",fontWeight:700,color:"#166534",marginBottom:6},
   h1:{margin:0,fontSize:30,fontWeight:800,letterSpacing:"-0.02em",lineHeight:1.05,fontFamily:"'Georgia',serif"},
   sub:{margin:"8px 0 0",fontSize:13,color:"#555",maxWidth:560},
   tabs:{display:"flex",gap:4,background:"#0000000d",padding:4,borderRadius:12},
@@ -324,8 +406,9 @@ const S = {
   cellEmpty:{background:"transparent",border:"none"},
   cellNum:{fontSize:12,fontWeight:700,color:"#aaa",marginBottom:4},
   cellEvents:{display:"flex",flexDirection:"column",gap:3,overflow:"hidden"},
-  evt:{border:"none",background:"#faf8f3",borderRadius:5,padding:"3px 6px",cursor:"pointer",display:"flex",flexDirection:"column",textAlign:"left",gap:1},
+  evt:{border:"none",background:"#f7fee7",borderRadius:5,padding:"3px 6px",cursor:"pointer",display:"flex",flexDirection:"column",textAlign:"left",gap:1},
   evtLoc:{fontSize:11,fontWeight:700,color:"#222",lineHeight:1.15,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
+  evtHora:{fontSize:9.5,fontWeight:700,color:"#166534",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   evtFirma:{fontSize:9.5,color:"#777",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   lista:{display:"flex",flexDirection:"column",gap:8,maxWidth:820},
   empty:{padding:40,textAlign:"center",color:"#999",fontSize:14},
@@ -340,13 +423,14 @@ const S = {
   tagEst:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,border:"1px dashed #b0891f",color:"#8a6a10",whiteSpace:"nowrap"},
   tagConf:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,background:"#111",color:"#fff",whiteSpace:"nowrap"},
   mapaWrap:{display:"flex",gap:20,flexWrap:"wrap"},
-  svg:{width:340,height:440,flexShrink:0,borderRadius:10,boxShadow:"0 2px 10px #0001"},
+  leafletMap:{width:520,height:440,flex:"1 1 520px",minWidth:300,borderRadius:12,boxShadow:"0 2px 14px #0002",overflow:"hidden",border:"1px solid #0001"},
+  mapFallback:{width:520,height:440,flex:"1 1 520px",minWidth:300,borderRadius:12,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",padding:24,textAlign:"center",color:"#666",border:"1px solid #0001"},
   mapList:{flex:1,minWidth:240,maxHeight:440,overflowY:"auto"},
   mapListTitle:{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#888",marginBottom:8},
   mapRow:{display:"flex",alignItems:"center",gap:10,padding:"9px 10px",borderRadius:8,cursor:"pointer",width:"100%",border:"none",background:"transparent",fontSize:13,borderBottom:"1px solid #0001"},
   mapCount:{fontSize:12,fontWeight:800,color:"#555",background:"#0000000a",borderRadius:20,padding:"2px 9px"},
   overlay:{position:"fixed",inset:0,background:"#0007",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:20},
-  modal:{background:"#fff",borderRadius:16,maxWidth:460,width:"100%",padding:"28px 26px 24px",position:"relative",boxShadow:"0 20px 60px #0004",overflow:"hidden"},
+  modal:{background:"#fff",borderRadius:16,maxWidth:500,width:"100%",padding:"28px 26px 24px",position:"relative",boxShadow:"0 20px 60px #0004",overflow:"hidden"},
   modalBar:{position:"absolute",top:0,left:0,right:0,height:5},
   modalClose:{position:"absolute",top:12,right:14,border:"none",background:"transparent",fontSize:26,lineHeight:1,cursor:"pointer",color:"#999"},
   modalTipo:{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#999",marginTop:6},
@@ -354,6 +438,9 @@ const S = {
   modalGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px 18px"},
   fieldK:{fontSize:10.5,fontWeight:700,letterSpacing:"0.05em",textTransform:"uppercase",color:"#aaa",marginBottom:2},
   fieldV:{fontSize:13.5,fontWeight:600,color:"#222",lineHeight:1.3},
+  calendarActions:{display:"flex",gap:10,flexWrap:"wrap",marginTop:20,paddingTop:16,borderTop:"1px solid #0001"},
+  calendarBtn:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#166534",color:"#fff",fontSize:12.5,fontWeight:800,padding:"9px 12px",borderRadius:10},
+  calendarBtnAlt:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#e5f8ec",color:"#166534",fontSize:12.5,fontWeight:800,padding:"9px 12px",borderRadius:10,border:"1px solid #16653433"},
   footer:{padding:"18px 28px 30px",fontSize:11,color:"#999",borderTop:"1px solid #0001",lineHeight:1.5},
 };
 
