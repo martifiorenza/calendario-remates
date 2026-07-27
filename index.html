@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Remates ganaderos 2026 — Litoral y Centro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#F7F4ED;}
+  #root{min-height:100vh;}
+  .chip:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 2px 6px #0001}
+  .evt:hover{background:#f0ebe0 !important}
+  .rowitem:hover{box-shadow:0 2px 10px #0001;transform:translateY(-1px);transition:all .12s}
+  *{box-sizing:border-box}
+  .loadwrap{display:flex;align-items:center;justify-content:center;height:100vh;
+    font-family:'Inter',system-ui,sans-serif;color:#888;font-size:15px;flex-direction:column;gap:14px}
+  .spin{width:34px;height:34px;border:3px solid #0001;border-top-color:#B45309;border-radius:50%;
+    animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .errbox{max-width:520px;font-family:'Inter',system-ui,sans-serif;padding:24px;text-align:center;line-height:1.5}
+  .errbox code{background:#0001;padding:2px 6px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="loadwrap"><div class="spin"></div><div>Cargando remates…</div></div>
+</div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useMemo, useEffect } = React;
+
+const GRUPO_COLOR = {
+  "e-Brangus": "#C2410C", "AFA":"#0E7490", "Pastore":"#7C3AED",
+  "Charles":"#BE185D", "Lehmann":"#15803D", "Rosgan":"#B45309",
+  "Exposiciones":"#1D4ED8",
+};
+const PROV_LIST = ["Santa Fe","Entre Ríos","Córdoba","Corrientes","Misiones"];
+const GRUPOS = ["e-Brangus","AFA","Pastore","Charles","Lehmann","Rosgan","Exposiciones"];
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+
+function parseFecha(f){ const [y,m,d]=f.split("-").map(Number); return new Date(y,m-1,d); }
+
+const MAP = { latMin:-34.0, latMax:-27.0, lngMin:-65.0, lngMax:-57.5, w:340, h:440 };
+function proj(lat,lng){
+  const x=((lng-MAP.lngMin)/(MAP.lngMax-MAP.lngMin))*MAP.w;
+  const y=((MAP.latMax-lat)/(MAP.latMax-MAP.latMin))*MAP.h;
+  return [x,y];
+}
+
+function App(){
+  const [REMATES,setRemates]=useState(null);
+  const [loadErr,setLoadErr]=useState(null);
+  const [vista,setVista]=useState("calendario");
+  const [mesIdx,setMesIdx]=useState(6);
+  const [fGrupos,setFGrupos]=useState(new Set(GRUPOS));
+  const [fProvs,setFProvs]=useState(new Set(PROV_LIST));
+  const [fTipos,setFTipos]=useState(new Set());
+  const [soloConfirmados,setSoloConfirmados]=useState(false);
+  const [sel,setSel]=useState(null);
+  const [hoverLoc,setHoverLoc]=useState(null);
+
+  useEffect(()=>{
+    fetch("remates.json?v="+Date.now())
+      .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+      .then(data=>{
+        const arr = Array.isArray(data) ? data : data.remates;
+        setRemates(arr);
+        setFTipos(new Set([...new Set(arr.map(r=>r.tipo))]));
+      })
+      .catch(e=>setLoadErr(e.message));
+  },[]);
+
+  if(loadErr) return (
+    <div className="loadwrap">
+      <div className="errbox">
+        <b>No se pudo cargar <code>remates.json</code></b><br/><br/>
+        {loadErr}<br/><br/>
+        Si abriste este archivo con doble clic, el navegador bloquea la carga del JSON.
+        Subilo a GitHub Pages (o serví la carpeta con un servidor local) y va a funcionar.
+      </div>
+    </div>
+  );
+  if(!REMATES) return <div className="loadwrap"><div className="spin"></div><div>Cargando remates…</div></div>;
+
+  const TIPOS=[...new Set(REMATES.map(r=>r.tipo))].sort();
+
+  const filtrados = REMATES.filter(r =>
+    fGrupos.has(r.grupo) && fProvs.has(r.prov) && fTipos.has(r.tipo) &&
+    (!soloConfirmados || r.confianza==="confirmado")
+  );
+
+  const toggle=(set,val,setter)=>{const n=new Set(set);n.has(val)?n.delete(val):n.add(val);setter(n);};
+
+  const anio=2026;
+  const primerDia=new Date(anio,mesIdx,1);
+  const offset=(primerDia.getDay()+6)%7;
+  const diasEnMes=new Date(anio,mesIdx+1,0).getDate();
+  const celdas=[];
+  for(let i=0;i<offset;i++)celdas.push(null);
+  for(let d=1;d<=diasEnMes;d++)celdas.push(d);
+  const porDia={};
+  filtrados.forEach(r=>{const dt=parseFecha(r.fecha);
+    if(dt.getFullYear()===anio&&dt.getMonth()===mesIdx){const k=dt.getDate();(porDia[k]=porDia[k]||[]).push(r);}});
+
+  const listaOrdenada=[...filtrados].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+
+  const porLocMap={};
+  filtrados.forEach(r=>{(porLocMap[r.loc]=porLocMap[r.loc]||{loc:r.loc,prov:r.prov,lat:r.lat,lng:r.lng,items:[]}).items.push(r);});
+  const porLoc=Object.values(porLocMap);
+  const totalConfirmados=filtrados.filter(r=>r.confianza==="confirmado").length;
+
+  return (
+    <div style={S.root}>
+      <header style={S.header}>
+        <div>
+          <div style={S.kicker}>CAMPAÑA 2026 · LITORAL Y CENTRO</div>
+          <h1 style={S.h1}>Calendario de remates ganaderos</h1>
+          <p style={S.sub}>{filtrados.length} eventos en pantalla · {totalConfirmados} con fecha confirmada ·
+            Santa&nbsp;Fe, Entre&nbsp;Ríos, Córdoba, Corrientes, Misiones</p>
+        </div>
+        <div style={S.tabs}>
+          {[["calendario","Calendario"],["lista","Lista"],["mapa","Mapa"]].map(([k,label])=>(
+            <button key={k} onClick={()=>setVista(k)} style={{...S.tab,...(vista===k?S.tabActive:{})}}>{label}</button>
+          ))}
+        </div>
+      </header>
+
+      <div style={S.body}>
+        <aside style={S.sidebar}>
+          <FilterGroup title="Firma / mercado">
+            {GRUPOS.map(g=><Chip key={g} on={fGrupos.has(g)} color={GRUPO_COLOR[g]} onClick={()=>toggle(fGrupos,g,setFGrupos)} label={g}/>)}
+          </FilterGroup>
+          <FilterGroup title="Provincia">
+            {PROV_LIST.map(p=>{const n=REMATES.filter(r=>r.prov===p).length;
+              return <Chip key={p} on={fProvs.has(p)} disabled={n===0} onClick={()=>toggle(fProvs,p,setFProvs)} label={`${p}${n===0?" (0)":""}`}/>;})}
+          </FilterGroup>
+          <FilterGroup title="Tipo de hacienda">
+            {TIPOS.map(t=><Chip key={t} on={fTipos.has(t)} onClick={()=>toggle(fTipos,t,setFTipos)} label={t}/>)}
+          </FilterGroup>
+          <label style={S.switchRow}>
+            <input type="checkbox" checked={soloConfirmados} onChange={e=>setSoloConfirmados(e.target.checked)}/>
+            <span>Solo fechas confirmadas</span>
+          </label>
+          <div style={S.legendBox}>
+            <div style={S.legendTitle}>Confianza del dato</div>
+            <div style={S.legendItem}><span style={{...S.dot,background:"#111"}}/> Confirmado por la fuente</div>
+            <div style={S.legendItem}><span style={S.dotHollow}/> Estimado (recurrencia) — verificar</div>
+          </div>
+        </aside>
+
+        <main style={S.main}>
+          {vista==="calendario" && (
+            <div>
+              <div style={S.monthNav}>
+                <button style={S.navBtn} onClick={()=>setMesIdx(m=>Math.max(0,m-1))} disabled={mesIdx<=0}>‹</button>
+                <div style={S.monthLabel}>{MESES[mesIdx]} <span style={{opacity:.5}}>2026</span></div>
+                <button style={S.navBtn} onClick={()=>setMesIdx(m=>Math.min(11,m+1))} disabled={mesIdx>=11}>›</button>
+              </div>
+              <div style={S.grid}>
+                {DIAS.map(d=><div key={d} style={S.dow}>{d}</div>)}
+                {celdas.map((d,i)=>(
+                  <div key={i} style={{...S.cell,...(d?{}:S.cellEmpty)}}>
+                    {d && (
+                      <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
+                        <div style={S.cellNum}>{d}</div>
+                        <div style={S.cellEvents}>
+                          {(porDia[d]||[]).map(r=>(
+                            <button key={r.id} onClick={()=>setSel(r)} className="evt"
+                              style={{...S.evt,borderLeft:`3px solid ${GRUPO_COLOR[r.grupo]}`,opacity:r.confianza==="estimado"?0.72:1}}>
+                              <span style={S.evtLoc}>{r.loc}</span>
+                              <span style={S.evtFirma}>{r.grupo}{r.confianza==="estimado"?" ·~":""}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {vista==="lista" && (
+            <div style={S.lista}>
+              {listaOrdenada.length===0 && <div style={S.empty}>No hay eventos con estos filtros. Activá más firmas o provincias.</div>}
+              {listaOrdenada.map(r=>(
+                <button key={r.id} onClick={()=>setSel(r)} className="rowitem" style={S.row}>
+                  <div style={{...S.rowDate,color:GRUPO_COLOR[r.grupo]}}>
+                    <div style={S.rowDay}>{parseFecha(r.fecha).getDate()}</div>
+                    <div style={S.rowMon}>{MESES[parseFecha(r.fecha).getMonth()].slice(0,3)}</div>
+                  </div>
+                  <div style={{flex:1,textAlign:"left"}}>
+                    <div style={S.rowTitle}>{r.cabana}</div>
+                    <div style={S.rowMeta}><b>{r.loc}</b>, {r.prov} · {r.firma}{r.hora?` · ${r.hora}`:""}</div>
+                  </div>
+                  <div style={S.rowTags}>
+                    <span style={{...S.tag,background:GRUPO_COLOR[r.grupo]+"22",color:GRUPO_COLOR[r.grupo]}}>{r.tipo}</span>
+                    {r.confianza==="estimado"
+                      ? <span style={S.tagEst}>estimado</span>
+                      : <span style={S.tagConf}>confirmado</span>}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {vista==="mapa" && (
+            <div style={S.mapaWrap}>
+              <svg viewBox={`0 0 ${MAP.w} ${MAP.h}`} style={S.svg} role="img" aria-label="Mapa de localidades">
+                <rect x="0" y="0" width={MAP.w} height={MAP.h} fill="#EDE7DA" rx="10"/>
+                {[-33,-31,-29].map(la=>{const [,y]=proj(la,-60);return <line key={la} x1="0" y1={y} x2={MAP.w} y2={y} stroke="#0002" strokeDasharray="2 5"/>;})}
+                {porLoc.map(g=>{
+                  const [x,y]=proj(g.lat,g.lng);
+                  const col=GRUPO_COLOR[g.items[0].grupo];
+                  const rad=Math.min(6+g.items.length*1.6,16);
+                  const hov=hoverLoc===g.loc;
+                  return (
+                    <g key={g.loc} transform={`translate(${x},${y})`}
+                       onMouseEnter={()=>setHoverLoc(g.loc)} onMouseLeave={()=>setHoverLoc(null)}
+                       onClick={()=>setSel(g.items[0])} style={{cursor:"pointer"}}>
+                      <circle r={rad} fill={col} fillOpacity={hov?0.9:0.55} stroke="#fff" strokeWidth="1.5"/>
+                      <text y="4" textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff">{g.items.length}</text>
+                      {hov && <text y={-rad-4} textAnchor="middle" fontSize="11" fontWeight="700" fill="#1a1a1a">{g.loc}</text>}
+                    </g>
+                  );
+                })}
+              </svg>
+              <div style={S.mapList}>
+                <div style={S.mapListTitle}>Localidades ({porLoc.length})</div>
+                {porLoc.sort((a,b)=>b.items.length-a.items.length).map(g=>(
+                  <button key={g.loc} className="rowitem"
+                    onMouseEnter={()=>setHoverLoc(g.loc)} onMouseLeave={()=>setHoverLoc(null)}
+                    onClick={()=>setSel(g.items[0])}
+                    style={{...S.mapRow,...(hoverLoc===g.loc?{background:"#fff"}:{})}}>
+                    <span style={{...S.dot,background:GRUPO_COLOR[g.items[0].grupo]}}/>
+                    <span style={{flex:1,textAlign:"left"}}><b>{g.loc}</b> <span style={{opacity:.55}}>· {g.prov}</span></span>
+                    <span style={S.mapCount}>{g.items.length}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {sel && (
+        <div style={S.overlay} onClick={()=>setSel(null)}>
+          <div style={S.modal} onClick={e=>e.stopPropagation()}>
+            <div style={{...S.modalBar,background:GRUPO_COLOR[sel.grupo]}}/>
+            <button style={S.modalClose} onClick={()=>setSel(null)}>×</button>
+            <div style={S.modalTipo}>{sel.tipo}</div>
+            <h3 style={S.modalTitle}>{sel.cabana}</h3>
+            <div style={S.modalGrid}>
+              <Field k="Fecha" v={`${parseFecha(sel.fecha).getDate()} de ${MESES[parseFecha(sel.fecha).getMonth()]} 2026${sel.hora?` · ${sel.hora} h`:""}`}/>
+              <Field k="Localidad" v={`${sel.loc}, ${sel.prov}`}/>
+              <Field k="Firma / mercado" v={sel.firma}/>
+              <Field k="Modalidad" v={sel.modalidad}/>
+              <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
+              <Field k="Fuente" v={sel.fuente}/>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer style={S.footer}>
+        Datos: e-brangus.com · cooperativalehmann.coop · consignatarias.com.ar · rosgan.com.ar · FARER 2026 ·
+        Editá <b>remates.json</b> para actualizar. Las fechas “estimado” provienen de recurrencias y deben confirmarse con la firma.
+      </footer>
+    </div>
+  );
+}
+
+function FilterGroup({title,children}){return <div style={S.fgroup}><div style={S.fgroupTitle}>{title}</div><div style={S.chips}>{children}</div></div>;}
+function Chip({on,onClick,label,color,disabled}){
+  return <button onClick={onClick} disabled={disabled} className="chip"
+    style={{...S.chip,...(on?{background:color||"#1a1a1a",color:"#fff",borderColor:color||"#1a1a1a"}:{}),...(disabled?{opacity:.35,cursor:"not-allowed"}:{})}}>{label}</button>;
+}
+function Field({k,v}){return <div><div style={S.fieldK}>{k}</div><div style={S.fieldV}>{v}</div></div>;}
+
+const S = {
+  root:{fontFamily:"'Inter',system-ui,sans-serif",background:"#F7F4ED",color:"#1a1a1a",minHeight:"100vh"},
+  header:{display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16,padding:"26px 28px 18px",borderBottom:"1px solid #0001",background:"#F7F4ED",position:"sticky",top:0,zIndex:5},
+  kicker:{fontSize:11,letterSpacing:"0.18em",fontWeight:700,color:"#B45309",marginBottom:6},
+  h1:{margin:0,fontSize:30,fontWeight:800,letterSpacing:"-0.02em",lineHeight:1.05,fontFamily:"'Georgia',serif"},
+  sub:{margin:"8px 0 0",fontSize:13,color:"#555",maxWidth:560},
+  tabs:{display:"flex",gap:4,background:"#0000000d",padding:4,borderRadius:12},
+  tab:{border:"none",background:"transparent",padding:"8px 16px",borderRadius:9,fontSize:13,fontWeight:600,cursor:"pointer",color:"#555"},
+  tabActive:{background:"#fff",color:"#111",boxShadow:"0 1px 3px #0002"},
+  body:{display:"flex",gap:0,alignItems:"flex-start"},
+  sidebar:{width:236,flexShrink:0,padding:"20px 18px",position:"sticky",top:120,maxHeight:"calc(100vh - 120px)",overflowY:"auto"},
+  fgroup:{marginBottom:20},
+  fgroupTitle:{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#888",marginBottom:9},
+  chips:{display:"flex",flexWrap:"wrap",gap:6},
+  chip:{border:"1px solid #0002",background:"#fff",padding:"5px 10px",borderRadius:20,fontSize:12,fontWeight:600,cursor:"pointer",color:"#333",transition:"all .12s"},
+  switchRow:{display:"flex",alignItems:"center",gap:8,fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:18},
+  legendBox:{background:"#fff",border:"1px solid #0001",borderRadius:12,padding:"12px 13px"},
+  legendTitle:{fontSize:11,fontWeight:700,letterSpacing:"0.05em",textTransform:"uppercase",color:"#999",marginBottom:8},
+  legendItem:{display:"flex",alignItems:"center",gap:8,fontSize:12,color:"#444",marginBottom:6},
+  dot:{width:11,height:11,borderRadius:"50%",display:"inline-block",flexShrink:0},
+  dotHollow:{width:11,height:11,borderRadius:"50%",display:"inline-block",flexShrink:0,border:"2px solid #999",background:"transparent",boxSizing:"border-box"},
+  main:{flex:1,padding:"20px 28px 40px",minWidth:0},
+  monthNav:{display:"flex",alignItems:"center",justifyContent:"center",gap:18,marginBottom:16},
+  monthLabel:{fontSize:22,fontWeight:800,textTransform:"capitalize",fontFamily:"'Georgia',serif",minWidth:200,textAlign:"center"},
+  navBtn:{width:38,height:38,borderRadius:"50%",border:"1px solid #0002",background:"#fff",fontSize:20,cursor:"pointer",lineHeight:1,color:"#333"},
+  grid:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:6},
+  dow:{fontSize:11,fontWeight:700,color:"#999",textAlign:"center",padding:"2px 0",letterSpacing:"0.05em"},
+  cell:{background:"#fff",border:"1px solid #0001",borderRadius:9,minHeight:96,padding:6,display:"flex",flexDirection:"column"},
+  cellEmpty:{background:"transparent",border:"none"},
+  cellNum:{fontSize:12,fontWeight:700,color:"#aaa",marginBottom:4},
+  cellEvents:{display:"flex",flexDirection:"column",gap:3,overflow:"hidden"},
+  evt:{border:"none",background:"#faf8f3",borderRadius:5,padding:"3px 6px",cursor:"pointer",display:"flex",flexDirection:"column",textAlign:"left",gap:1},
+  evtLoc:{fontSize:11,fontWeight:700,color:"#222",lineHeight:1.15,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
+  evtFirma:{fontSize:9.5,color:"#777",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
+  lista:{display:"flex",flexDirection:"column",gap:8,maxWidth:820},
+  empty:{padding:40,textAlign:"center",color:"#999",fontSize:14},
+  row:{display:"flex",alignItems:"center",gap:16,background:"#fff",border:"1px solid #0001",borderRadius:12,padding:"12px 16px",cursor:"pointer",width:"100%"},
+  rowDate:{textAlign:"center",width:44,flexShrink:0},
+  rowDay:{fontSize:22,fontWeight:800,lineHeight:1,fontFamily:"'Georgia',serif"},
+  rowMon:{fontSize:11,fontWeight:700,textTransform:"uppercase",opacity:.7},
+  rowTitle:{fontSize:14,fontWeight:700,color:"#1a1a1a",marginBottom:2},
+  rowMeta:{fontSize:12,color:"#666"},
+  rowTags:{display:"flex",flexDirection:"column",gap:4,alignItems:"flex-end",flexShrink:0},
+  tag:{fontSize:10.5,fontWeight:700,padding:"3px 8px",borderRadius:20,whiteSpace:"nowrap"},
+  tagEst:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,border:"1px dashed #b0891f",color:"#8a6a10",whiteSpace:"nowrap"},
+  tagConf:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,background:"#111",color:"#fff",whiteSpace:"nowrap"},
+  mapaWrap:{display:"flex",gap:20,flexWrap:"wrap"},
+  svg:{width:340,height:440,flexShrink:0,borderRadius:10,boxShadow:"0 2px 10px #0001"},
+  mapList:{flex:1,minWidth:240,maxHeight:440,overflowY:"auto"},
+  mapListTitle:{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#888",marginBottom:8},
+  mapRow:{display:"flex",alignItems:"center",gap:10,padding:"9px 10px",borderRadius:8,cursor:"pointer",width:"100%",border:"none",background:"transparent",fontSize:13,borderBottom:"1px solid #0001"},
+  mapCount:{fontSize:12,fontWeight:800,color:"#555",background:"#0000000a",borderRadius:20,padding:"2px 9px"},
+  overlay:{position:"fixed",inset:0,background:"#0007",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:20},
+  modal:{background:"#fff",borderRadius:16,maxWidth:460,width:"100%",padding:"28px 26px 24px",position:"relative",boxShadow:"0 20px 60px #0004",overflow:"hidden"},
+  modalBar:{position:"absolute",top:0,left:0,right:0,height:5},
+  modalClose:{position:"absolute",top:12,right:14,border:"none",background:"transparent",fontSize:26,lineHeight:1,cursor:"pointer",color:"#999"},
+  modalTipo:{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#999",marginTop:6},
+  modalTitle:{margin:"4px 0 18px",fontSize:20,fontWeight:800,fontFamily:"'Georgia',serif",lineHeight:1.15},
+  modalGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px 18px"},
+  fieldK:{fontSize:10.5,fontWeight:700,letterSpacing:"0.05em",textTransform:"uppercase",color:"#aaa",marginBottom:2},
+  fieldV:{fontSize:13.5,fontWeight:600,color:"#222",lineHeight:1.3},
+  footer:{padding:"18px 28px 30px",fontSize:11,color:"#999",borderTop:"1px solid #0001",lineHeight:1.5},
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
