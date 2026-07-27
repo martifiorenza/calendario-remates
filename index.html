@@ -133,10 +133,31 @@ function sucursalesEvento(r, zonas){
   const point=[r.lng,r.lat];
   return [...new Set(zonas.filter(z=>pointInFeature(point,z)).map(zoneName))];
 }
+function simplifyRing(ring, maxPoints=180){
+  if(!ring || ring.length<=maxPoints) return ring;
+  const step=Math.ceil(ring.length/maxPoints);
+  const out=ring.filter((_,i)=>i%step===0);
+  const last=ring[ring.length-1];
+  if(out[out.length-1]!==last) out.push(last);
+  return out;
+}
+function simplifyFeature(feature){
+  const geom=feature && feature.geometry;
+  if(!geom) return feature;
+  const base={...feature, properties:{...feature.properties}};
+  if(geom.type==="Polygon"){
+    base.geometry={...geom, coordinates:geom.coordinates.map(r=>simplifyRing(r))};
+  }else if(geom.type==="MultiPolygon"){
+    base.geometry={...geom, coordinates:geom.coordinates.map(poly=>poly.map(r=>simplifyRing(r)))};
+  }
+  return base;
+}
 
 function App(){
   const [REMATES,setRemates]=useState(null);
   const [ZONAS,setZonas]=useState([]);
+  const [ZONAS_MAP,setZonasMap]=useState([]);
+  const [eventSucursales,setEventSucursales]=useState({});
   const [loadErr,setLoadErr]=useState(null);
   const [vista,setVista]=useState("calendario");
   const [mesIdx,setMesIdx]=useState(6);
@@ -166,10 +187,18 @@ function App(){
       .then(data=>{
         const zonas=data && Array.isArray(data.features) ? data.features.filter(f=>f.geometry) : [];
         setZonas(zonas);
+        setZonasMap(zonas.map(simplifyFeature));
         setFSucursales(new Set(zonas.map(zoneName)));
       })
       .catch(()=>{});
   },[]);
+
+  useEffect(()=>{
+    if(!REMATES || !ZONAS.length){ setEventSucursales({}); return; }
+    const next={};
+    REMATES.forEach(r=>{ next[r.id]=sucursalesEvento(r,ZONAS); });
+    setEventSucursales(next);
+  },[REMATES,ZONAS]);
 
   if(loadErr) return (
     <div className="loadwrap">
@@ -188,7 +217,7 @@ function App(){
   const sucursalNames=[...new Set(ZONAS.map(zoneName))].sort();
   const todasSucursales=sucursalNames.length===0 || fSucursales.size===sucursalNames.length;
   const filtrados = REMATES.filter(r => {
-    const pasaSucursal = todasSucursales || sucursalesEvento(r,ZONAS).some(s=>fSucursales.has(s));
+    const pasaSucursal = todasSucursales || (eventSucursales[r.id]||[]).some(s=>fSucursales.has(s));
     return fGrupos.has(r.grupo) && fProvs.has(r.prov) && fTipos.has(r.tipo) &&
       (!soloConfirmados || r.confianza==="confirmado") && pasaSucursal;
   });
@@ -231,6 +260,10 @@ function App(){
 
       <div style={S.body}>
         <aside style={S.sidebar}>
+          <DropdownFilter title="Firma / mercado" options={GRUPOS} selected={fGrupos} setSelected={setFGrupos} colorFor={g=>GRUPO_COLOR[g]}/>
+          <DropdownFilter title="Provincia" options={PROV_LIST} selected={fProvs} setSelected={setFProvs} countFor={p=>REMATES.filter(r=>r.prov===p).length}/>
+          {sucursalNames.length>0 && <DropdownFilter title="Sucursal" options={sucursalNames} selected={fSucursales} setSelected={setFSucursales}/>} 
+          <DropdownFilter title="Tipo de hacienda" options={TIPOS} selected={fTipos} setSelected={setFTipos}/>
           <FilterGroup title="Firma / mercado">
             {GRUPOS.map(g=><Chip key={g} on={fGrupos.has(g)} color={GRUPO_COLOR[g]} onClick={()=>toggle(fGrupos,g,setFGrupos)} label={g}/>)}
           </FilterGroup>
@@ -316,7 +349,7 @@ function App(){
 
           {vista==="mapa" && (
             <div style={S.mapaWrap}>
-              <LeafletMap porLoc={porLoc} zonas={ZONAS} fSucursales={fSucursales} setSel={setSel}/>
+              <LeafletMap porLoc={porLoc} zonas={ZONAS_MAP} fSucursales={fSucursales} setSel={setSel}/>
               <div style={S.mapList}>
                 <div style={S.mapListTitle}>Localidades ({porLoc.length})</div>
                 {[...porLoc].sort((a,b)=>b.items.length-a.items.length).map(g=>(
@@ -346,7 +379,7 @@ function App(){
               <Field k="Fecha" v={formatFecha(sel)}/>
               <Field k="Hora" v={horaEvento(sel)}/>
               <Field k="Localidad" v={`${sel.loc}, ${sel.prov}`}/>
-              {ZONAS.length>0 && <Field k="Sucursal / zona" v={sucursalesEvento(sel,ZONAS).join(", ") || "Fuera de zona"}/>} 
+              {ZONAS.length>0 && <Field k="Sucursal / zona" v={(eventSucursales[sel.id]||[]).join(", ") || "Fuera de zona"}/>} 
               <Field k="Firma / mercado" v={sel.firma}/>
               <Field k="Modalidad" v={sel.modalidad}/>
               <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
@@ -365,6 +398,43 @@ function App(){
   );
 }
 
+function DropdownFilter({title,options,selected,setSelected,colorFor,countFor}){
+  const total=options.length;
+  const active=options.filter(o=>selected.has(o)).length;
+  const all=active===total;
+  const toggleOne=(value)=>{
+    const next=new Set(selected);
+    next.has(value)?next.delete(value):next.add(value);
+    setSelected(next);
+  };
+  return (
+    <details style={S.filterBox}>
+      <summary style={S.filterSummary}>
+        <span>{title}</span>
+        <span style={S.filterBadge}>{all?"Todos":`${active}/${total}`}</span>
+      </summary>
+      <div style={S.filterPanel}>
+        <div style={S.filterActions}>
+          <button type="button" style={S.filterAction} onClick={()=>setSelected(new Set(options))}>Todos</button>
+          <button type="button" style={S.filterAction} onClick={()=>setSelected(new Set())}>Ninguno</button>
+        </div>
+        {options.map(opt=>{
+          const disabled=countFor && countFor(opt)===0;
+          return (
+            <div key={opt} style={{...S.filterOption,...(disabled?{opacity:.35}: {})}}>
+              <label style={S.filterLabel}>
+                <input type="checkbox" checked={selected.has(opt)} disabled={disabled} onChange={()=>toggleOne(opt)}/>
+                {colorFor && <span style={{...S.dot,background:colorFor(opt)}}/>}
+                <span style={{flex:1}}>{opt}{countFor?` (${countFor(opt)})`:""}</span>
+              </label>
+              <button type="button" disabled={disabled} style={S.onlyBtn} onClick={()=>setSelected(new Set([opt]))}>Solo</button>
+            </div>
+          );
+        })}
+      </div>
+    </details>
+  );
+}
 function FilterGroup({title,children}){return <div style={S.fgroup}><div style={S.fgroupTitle}>{title}</div><div style={S.chips}>{children}</div></div>;}
 function Chip({on,onClick,label,color,disabled}){
   return <button onClick={onClick} disabled={disabled} className="chip"
@@ -417,10 +487,10 @@ function LeafletMap({porLoc,zonas,fSucursales,setSel}){
     layer.clearLayers();
     const bounds=[];
     const zoneBounds=[];
-    const allSelected=!zonas.length || fSucursales.size===zonas.length;
+    const allSelected=!zonas.length || fSucursales.size===new Set(zonas.map(zoneName)).size;
     zonas.forEach(z=>{
       const name=zoneName(z);
-      if(!allSelected && !fSucursales.has(name)) return;
+      if(allSelected || !fSucursales.has(name)) return;
       const zone=window.L.geoJSON(z, {
         style:{ color:"#166534", weight:1.5, fillColor:"#86efac", fillOpacity:0.18 }
       }).bindTooltip(name, { sticky:true });
@@ -460,7 +530,16 @@ const S = {
   tabActive:{background:"#fff",color:"#111",boxShadow:"0 1px 3px #0002"},
   body:{display:"flex",gap:0,alignItems:"flex-start"},
   sidebar:{width:236,flexShrink:0,padding:"20px 18px",position:"sticky",top:120,maxHeight:"calc(100vh - 120px)",overflowY:"auto"},
-  fgroup:{marginBottom:20},
+  filterBox:{background:"#fff",border:"1px solid #0001",borderRadius:12,marginBottom:10,overflow:"hidden"},
+  filterSummary:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,padding:"10px 12px",cursor:"pointer",fontSize:11,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",color:"#666",listStyle:"none"},
+  filterBadge:{fontSize:10,letterSpacing:0,textTransform:"none",background:"#dcfce7",color:"#166534",padding:"2px 7px",borderRadius:20,whiteSpace:"nowrap"},
+  filterPanel:{padding:"0 10px 10px",display:"flex",flexDirection:"column",gap:6,maxHeight:240,overflowY:"auto"},
+  filterActions:{display:"flex",gap:6,position:"sticky",top:0,background:"#fff",padding:"2px 0 5px",zIndex:1},
+  filterAction:{border:"1px solid #16653433",background:"#e5f8ec",color:"#166534",borderRadius:8,padding:"5px 8px",fontSize:11,fontWeight:800,cursor:"pointer"},
+  filterOption:{display:"flex",alignItems:"center",gap:8},
+  filterLabel:{display:"flex",alignItems:"center",gap:7,flex:1,fontSize:12.5,fontWeight:650,color:"#333",minWidth:0},
+  onlyBtn:{border:"1px solid #0001",background:"#f8fafc",borderRadius:7,padding:"4px 7px",fontSize:10.5,fontWeight:800,cursor:"pointer",color:"#475569"},
+  fgroup:{display:"none",marginBottom:20},
   fgroupTitle:{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:"#888",marginBottom:9},
   chips:{display:"flex",flexWrap:"wrap",gap:6},
   chip:{border:"1px solid #0002",background:"#fff",padding:"5px 10px",borderRadius:20,fontSize:12,fontWeight:600,cursor:"pointer",color:"#333",transition:"all .12s"},
