@@ -30,7 +30,7 @@
   <div class="loadwrap"><div class="spin"></div><div>Cargando remates…</div></div>
 </div>
 
-<script type="text/babel" data-presets="react">
+<script type="text/plain" id="app-src">
 const { useState, useMemo, useEffect } = React;
 
 const rootEl = document.getElementById("root");
@@ -359,6 +359,17 @@ const S = {
 
 const mount = ReactDOM.createRoot ? ReactDOM.createRoot(rootEl) : null;
 (mount ? mount.render(<App/>) : ReactDOM.render(<App/>, rootEl));
+</script>
+<script>
+(function(){
+  try {
+    var source = document.getElementById('app-src').textContent;
+    var output = Babel.transform(source, { presets: [["react", { runtime: "classic" }]] }).code;
+    Function(output)();
+  } catch (err) {
+    document.getElementById('root').innerHTML = '<div class="loadwrap"><div class="errbox"><b>No se pudo iniciar la app</b><br/><br/>' + String(err && err.message ? err.message : err) + '</div></div>';
+  }
+})();
 </script>
 </body>
 </html>
