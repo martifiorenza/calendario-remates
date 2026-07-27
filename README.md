@@ -8,6 +8,7 @@ Calendario interactivo de remates ganaderos y exposiciones rurales en Santa Fe, 
 |---|---|
 | `index.html` | La aplicación completa (React vía CDN). Es lo que se abre en el navegador. |
 | `remates.json` | **Los datos.** Editá este archivo para agregar, cambiar o borrar remates. |
+| `sucursales.geojson` | Polígonos de zonas de sucursales para filtrar eventos por cobertura. |
 | `.nojekyll` | Evita que GitHub Pages procese la carpeta con Jekyll (necesario). |
 
 > **Importante:** el `index.html` lee `remates.json` con `fetch()`. Por seguridad del navegador, esto **NO funciona abriendo el HTML con doble clic** (`file://`). Funciona servido desde un servidor web: GitHub Pages, Netlify, o un servidor local.
@@ -15,7 +16,7 @@ Calendario interactivo de remates ganaderos y exposiciones rurales en Santa Fe, 
 ## Publicar en GitHub Pages
 
 1. Creá un repositorio nuevo en GitHub (por ejemplo `remates-2026`).
-2. Subí los tres archivos (`index.html`, `remates.json`, `.nojekyll`) a la raíz del repo.
+2. Subí los archivos (`index.html`, `remates.json`, `sucursales.geojson`, `.nojekyll`) a la raíz del repo.
    - Podés arrastrarlos en **Add file → Upload files**.
 3. Andá a **Settings → Pages**.
 4. En **Source**, elegí la rama `main` y la carpeta `/ (root)`. Guardá.

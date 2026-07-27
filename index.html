@@ -99,15 +99,51 @@ function calendarLinks(r){
     outlook:`https://outlook.live.com/calendar/0/deeplink/compose?${oq}`
   };
 }
+function zoneName(f){
+  const raw=(f.properties && (f.properties.name || f.properties.Name || f.properties.NOMBRE || f.properties.sucursal)) || "Sucursal sin nombre";
+  const name=String(raw).trim();
+  if(name.toUpperCase()==="PARANA NUEVO") return "PARANA";
+  if(name.toUpperCase()==="CONCORDIA NUEVO") return "CONCORDIA";
+  return name;
+}
+function pointInRing(point, ring){
+  const [x,y]=point;
+  let inside=false;
+  for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+    const xi=ring[i][0], yi=ring[i][1];
+    const xj=ring[j][0], yj=ring[j][1];
+    const intersect=((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi);
+    if(intersect) inside=!inside;
+  }
+  return inside;
+}
+function pointInPolygon(point, rings){
+  if(!rings || !rings.length || !pointInRing(point,rings[0])) return false;
+  return !rings.slice(1).some(ring=>pointInRing(point,ring));
+}
+function pointInFeature(point, feature){
+  const geom=feature && feature.geometry;
+  if(!geom) return false;
+  if(geom.type==="Polygon") return pointInPolygon(point,geom.coordinates);
+  if(geom.type==="MultiPolygon") return geom.coordinates.some(poly=>pointInPolygon(point,poly));
+  return false;
+}
+function sucursalesEvento(r, zonas){
+  if(typeof r.lat!=="number" || typeof r.lng!=="number") return [];
+  const point=[r.lng,r.lat];
+  return [...new Set(zonas.filter(z=>pointInFeature(point,z)).map(zoneName))];
+}
 
 function App(){
   const [REMATES,setRemates]=useState(null);
+  const [ZONAS,setZonas]=useState([]);
   const [loadErr,setLoadErr]=useState(null);
   const [vista,setVista]=useState("calendario");
   const [mesIdx,setMesIdx]=useState(6);
   const [fGrupos,setFGrupos]=useState(new Set(GRUPOS));
   const [fProvs,setFProvs]=useState(new Set(PROV_LIST));
   const [fTipos,setFTipos]=useState(new Set());
+  const [fSucursales,setFSucursales]=useState(new Set());
   const [soloConfirmados,setSoloConfirmados]=useState(false);
   const [sel,setSel]=useState(null);
   const [hoverLoc,setHoverLoc]=useState(null);
@@ -124,6 +160,17 @@ function App(){
       .catch(e=>setLoadErr(e.message));
   },[]);
 
+  useEffect(()=>{
+    fetch("sucursales.geojson?v="+Date.now())
+      .then(r=>r.ok?r.json():null)
+      .then(data=>{
+        const zonas=data && Array.isArray(data.features) ? data.features.filter(f=>f.geometry) : [];
+        setZonas(zonas);
+        setFSucursales(new Set(zonas.map(zoneName)));
+      })
+      .catch(()=>{});
+  },[]);
+
   if(loadErr) return (
     <div className="loadwrap">
       <div className="errbox">
@@ -138,10 +185,13 @@ function App(){
 
   const TIPOS=[...new Set(REMATES.map(r=>r.tipo))].sort();
 
-  const filtrados = REMATES.filter(r =>
-    fGrupos.has(r.grupo) && fProvs.has(r.prov) && fTipos.has(r.tipo) &&
-    (!soloConfirmados || r.confianza==="confirmado")
-  );
+  const sucursalNames=[...new Set(ZONAS.map(zoneName))].sort();
+  const todasSucursales=sucursalNames.length===0 || fSucursales.size===sucursalNames.length;
+  const filtrados = REMATES.filter(r => {
+    const pasaSucursal = todasSucursales || sucursalesEvento(r,ZONAS).some(s=>fSucursales.has(s));
+    return fGrupos.has(r.grupo) && fProvs.has(r.prov) && fTipos.has(r.tipo) &&
+      (!soloConfirmados || r.confianza==="confirmado") && pasaSucursal;
+  });
 
   const toggle=(set,val,setter)=>{const n=new Set(set);n.has(val)?n.delete(val):n.add(val);setter(n);};
 
@@ -188,6 +238,11 @@ function App(){
             {PROV_LIST.map(p=>{const n=REMATES.filter(r=>r.prov===p).length;
               return <Chip key={p} on={fProvs.has(p)} disabled={n===0} onClick={()=>toggle(fProvs,p,setFProvs)} label={`${p}${n===0?" (0)":""}`}/>;})}
           </FilterGroup>
+          {sucursalNames.length>0 && (
+            <FilterGroup title="Sucursal">
+              {sucursalNames.map(s=><Chip key={s} on={fSucursales.has(s)} onClick={()=>toggle(fSucursales,s,setFSucursales)} label={s}/>) }
+            </FilterGroup>
+          )}
           <FilterGroup title="Tipo de hacienda">
             {TIPOS.map(t=><Chip key={t} on={fTipos.has(t)} onClick={()=>toggle(fTipos,t,setFTipos)} label={t}/>)}
           </FilterGroup>
@@ -261,7 +316,7 @@ function App(){
 
           {vista==="mapa" && (
             <div style={S.mapaWrap}>
-              <LeafletMap porLoc={porLoc} setSel={setSel}/>
+              <LeafletMap porLoc={porLoc} zonas={ZONAS} fSucursales={fSucursales} setSel={setSel}/>
               <div style={S.mapList}>
                 <div style={S.mapListTitle}>Localidades ({porLoc.length})</div>
                 {[...porLoc].sort((a,b)=>b.items.length-a.items.length).map(g=>(
@@ -291,6 +346,7 @@ function App(){
               <Field k="Fecha" v={formatFecha(sel)}/>
               <Field k="Hora" v={horaEvento(sel)}/>
               <Field k="Localidad" v={`${sel.loc}, ${sel.prov}`}/>
+              {ZONAS.length>0 && <Field k="Sucursal / zona" v={sucursalesEvento(sel,ZONAS).join(", ") || "Fuera de zona"}/>} 
               <Field k="Firma / mercado" v={sel.firma}/>
               <Field k="Modalidad" v={sel.modalidad}/>
               <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
@@ -326,11 +382,13 @@ function CalendarButtons({evento}){
   );
 }
 
-function LeafletMap({porLoc,setSel}){
+function LeafletMap({porLoc,zonas,fSucursales,setSel}){
   const el=useRef(null);
   const mapRef=useRef(null);
   const markersRef=useRef(null);
+  const zonesRef=useRef(null);
   const locKey=porLoc.map(g=>`${g.loc}:${g.items.length}:${g.items.map(r=>r.id).join(",")}`).join("|");
+  const zoneKey=zonas.map(zoneName).join("|")+":"+[...fSucursales].sort().join("|");
 
   useEffect(()=>()=>{
     if(mapRef.current){
@@ -348,13 +406,28 @@ function LeafletMap({porLoc,setSel}){
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
       mapRef.current=map;
+      zonesRef.current=window.L.layerGroup().addTo(map);
       markersRef.current=window.L.layerGroup().addTo(map);
     }
 
     const map=mapRef.current;
+    const zoneLayer=zonesRef.current;
     const layer=markersRef.current;
+    zoneLayer.clearLayers();
     layer.clearLayers();
     const bounds=[];
+    const zoneBounds=[];
+    const allSelected=!zonas.length || fSucursales.size===zonas.length;
+    zonas.forEach(z=>{
+      const name=zoneName(z);
+      if(!allSelected && !fSucursales.has(name)) return;
+      const zone=window.L.geoJSON(z, {
+        style:{ color:"#166534", weight:1.5, fillColor:"#86efac", fillOpacity:0.18 }
+      }).bindTooltip(name, { sticky:true });
+      zone.addTo(zoneLayer);
+      const zBounds=zone.getBounds();
+      if(zBounds.isValid()) zoneBounds.push(zBounds.getSouthWest(), zBounds.getNorthEast());
+    });
     porLoc.forEach(g=>{
       if(typeof g.lat!=="number" || typeof g.lng!=="number") return;
       const first=g.items[0];
@@ -368,8 +441,9 @@ function LeafletMap({porLoc,setSel}){
       bounds.push([g.lat,g.lng]);
     });
     if(bounds.length) map.fitBounds(bounds, { padding:[28,28], maxZoom:8 });
+    else if(zoneBounds.length) map.fitBounds(zoneBounds, { padding:[28,28], maxZoom:8 });
     setTimeout(()=>map.invalidateSize(), 0);
-  }, [locKey,setSel]);
+  }, [locKey,zoneKey,setSel]);
 
   if(!window.L) return <div style={S.mapFallback}>No se pudo cargar Leaflet. Revisá la conexión y recargá la página.</div>;
   return <div ref={el} style={S.leafletMap} aria-label="Mapa de localidades"/>;
