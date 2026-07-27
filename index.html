@@ -7,19 +7,14 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23dcfce7'/%3E%3Cpath d='M18 18c-5 0-8 3-8 7 0 3 2 5 5 6-1 4 0 10 4 13 3 3 7 4 13 4s10-1 13-4c4-3 5-9 4-13 3-1 5-3 5-6 0-4-3-7-8-7-3 0-5 1-7 3-2-1-4-2-7-2s-5 1-7 2c-2-2-4-3-7-3z' fill='%23fff' stroke='%23166534' stroke-width='3'/%3E%3Cpath d='M23 22c-3 0-6 2-6 6 0 2 1 4 3 5 2-3 5-6 9-8-1-2-3-3-6-3zM41 22c3 0 6 2 6 6 0 2-1 4-3 5-2-3-5-6-9-8 1-2 3-3 6-3z' fill='%23171717'/%3E%3Ccircle cx='25' cy='34' r='3' fill='%23171717'/%3E%3Ccircle cx='39' cy='34' r='3' fill='%23171717'/%3E%3Cellipse cx='32' cy='43' rx='10' ry='7' fill='%23fecaca'/%3E%3Ccircle cx='28' cy='43' r='1.7' fill='%237f1d1d'/%3E%3Ccircle cx='36' cy='43' r='1.7' fill='%237f1d1d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQnLL3kRZVpE8GyKcN6EKN0t2ATmI0M=" crossorigin="" />
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
   html,body{margin:0;padding:0;background:#DCFCE7;}
   #root{min-height:100vh;}
   .evt:hover{background:#ecfdf5 !important}
   .rowitem:hover{box-shadow:0 2px 10px #0001;transform:translateY(-1px);transition:all .12s}
-  .leaflet-container{font-family:'Inter',system-ui,sans-serif;}
-  .map-pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;border:2px solid #fff;box-shadow:0 4px 14px #0003;}
-  .leaflet-popup-content{margin:10px 12px;font-size:12px;line-height:1.35;}
   *{box-sizing:border-box}
   .loadwrap{display:flex;align-items:center;justify-content:center;height:100vh;
     font-family:'Inter',system-ui,sans-serif;color:#888;font-size:15px;flex-direction:column;gap:14px}
@@ -36,7 +31,7 @@
 </div>
 
 <script type="text/plain" id="app-src">
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect } = React;
 
 const rootEl = document.getElementById("root");
 function showFatal(msg){
@@ -59,8 +54,14 @@ const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto"
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
 const SUCURSALES = ["AVELLANEDA","CAÑADA DE GOMEZ","CARLOS PELLEGRINI","CERES","CHAJARI","CONCORDIA","LA PAZ","MERCEDES","MORTEROS","OBERA","PARANA","SAN JUSTO","TOTORAS","VICTORIA"];
 const EVENT_SUCURSALES = {"eb-001":["MERCEDES"],"eb-002":["MERCEDES"],"eb-003":["MORTEROS"],"eb-005":["MERCEDES"],"eb-006":["LA PAZ"],"eb-007":["SAN JUSTO"],"eb-008":["PARANA"],"eb-009":["MERCEDES"],"eb-010":["CERES"],"eb-013":["MORTEROS"],"eb-014":["PARANA"],"eb-016":["CONCORDIA"],"eb-017":["MERCEDES"],"eb-018":["AVELLANEDA"],"eb-018b":["MERCEDES"],"eb-019":["MERCEDES"],"eb-020":["SAN JUSTO"],"eb-021":["MERCEDES"],"eb-022":["SAN JUSTO"],"eb-024":["MERCEDES"],"eb-025":["MERCEDES"],"eb-026":["SAN JUSTO"],"eb-027":["MERCEDES"],"eb-029":["CERES"],"eb-030":["MERCEDES"],"eb-032":["SAN JUSTO"],"eb-033":["AVELLANEDA"],"eb-034":["SAN JUSTO"],"eb-035":["MORTEROS"],"eb-037":["CERES"],"eb-038":["PARANA"],"eb-039":["CERES"],"eb-040":["AVELLANEDA"],"eb-041":["CERES"],"eb-042":["MERCEDES"],"eb-043":["SAN JUSTO"],"eb-045":["MERCEDES"],"eb-046":["AVELLANEDA"],"afa-c01":["TOTORAS"],"afa-c02":["TOTORAS"],"afa-c04":["TOTORAS"],"afa-c06":["CARLOS PELLEGRINI"],"afa-t01":["TOTORAS"],"afa-t02":["TOTORAS"],"afa-t03":["TOTORAS"],"afa-t04":["TOTORAS"],"afa-t05":["TOTORAS"],"afa-t06":["TOTORAS"],"afa-t07":["TOTORAS"],"afa-t08":["TOTORAS"],"afa-r01":["CARLOS PELLEGRINI"],"afa-r02":["CARLOS PELLEGRINI"],"afa-r03":["CARLOS PELLEGRINI"],"pas-01":["CARLOS PELLEGRINI"],"pas-02":["CARLOS PELLEGRINI"],"pas-03":["CARLOS PELLEGRINI"],"pas-04":["CARLOS PELLEGRINI"],"pas-05":["CARLOS PELLEGRINI"],"pas-06":["CARLOS PELLEGRINI"],"pas-07":["CARLOS PELLEGRINI"],"pas-08":["CARLOS PELLEGRINI"],"pas-09":["CARLOS PELLEGRINI"],"cha-01":["CARLOS PELLEGRINI"],"cha-02":["CARLOS PELLEGRINI"],"leh-emi-08a":["SAN JUSTO"],"leh-sdo-08":["SAN JUSTO"],"leh-sua-08":["MORTEROS"],"leh-rom-08":["AVELLANEDA"],"leh-hel-08":["SAN JUSTO"],"leh-fel-08":["SAN JUSTO"],"leh-emi-08b":["SAN JUSTO"],"leh-cen-09":["CAÑADA DE GOMEZ"],"leh-cen-10":["CAÑADA DE GOMEZ"],"leh-cen-11":["CAÑADA DE GOMEZ"],"leh-cen-12":["CAÑADA DE GOMEZ"],"exp-villaguay":["PARANA"],"exp-villaguay-0801":["PARANA"],"exp-villaguay-0802":["PARANA"],"exp-recon":["AVELLANEDA"],"exp-recon-0808":["AVELLANEDA"],"exp-recon-0809":["AVELLANEDA"],"exp-felic":["LA PAZ"],"exp-felic-0809":["LA PAZ"],"exp-feder":["CONCORDIA"],"exp-feder-0814":["CONCORDIA"],"exp-feder-0815":["CONCORDIA"],"exp-feder-0816":["CONCORDIA"],"exp-nogoya":["VICTORIA"],"exp-nogoya-0815":["VICTORIA"],"exp-nogoya-0816":["VICTORIA"],"exp-sanju":["SAN JUSTO"],"exp-hasenkamp":["LA PAZ"],"exp-hasenkamp-0823":["LA PAZ"],"exp-merce":["MERCEDES"],"exp-vera":["AVELLANEDA"],"exp-goya":["MERCEDES"],"exp-conco":["CONCORDIA"],"exp-chaja":["CHAJARI"]};
+const MAP = { latMin:-34, latMax:-27, lngMin:-65, lngMax:-55.5, w:760, h:470 };
 
 function parseFecha(f){ const [y,m,d]=f.split("-").map(Number); return new Date(y,m-1,d); }
+function projectPoint(lat,lng){
+  const x=((lng-MAP.lngMin)/(MAP.lngMax-MAP.lngMin))*MAP.w;
+  const y=((MAP.latMax-lat)/(MAP.latMax-MAP.latMin))*MAP.h;
+  return [Math.max(0,Math.min(MAP.w,x)), Math.max(0,Math.min(MAP.h,y))];
+}
 function formatFecha(r){
   const dt=parseFecha(r.fecha);
   return `${dt.getDate()} de ${MESES[dt.getMonth()]} 2026`;
@@ -249,7 +250,7 @@ function App(){
 
           {vista==="mapa" && (
             <div style={S.mapaWrap}>
-              <LeafletMap porLoc={porLoc} setSel={setSel}/>
+              <StaticMap porLoc={porLoc} setSel={setSel}/>
             </div>
           )}
         </main>
@@ -333,53 +334,47 @@ function CalendarButtons({evento}){
   );
 }
 
-function LeafletMap({porLoc,setSel}){
-  const el=useRef(null);
-  const mapRef=useRef(null);
-  const markersRef=useRef(null);
-  const locKey=porLoc.map(g=>`${g.loc}:${g.items.length}:${g.items.map(r=>r.id).join(",")}`).join("|");
-
-  useEffect(()=>()=>{
-    if(mapRef.current){
-      mapRef.current.remove();
-      mapRef.current=null;
-    }
-  },[]);
-
-  useEffect(()=>{
-    if(!el.current || !window.L) return;
-    if(!mapRef.current){
-      const map=window.L.map(el.current, { scrollWheelZoom:false, preferCanvas:true }).setView([-31.3,-60.6], 6);
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
-      mapRef.current=map;
-      markersRef.current=window.L.layerGroup().addTo(map);
-    }
-
-    const map=mapRef.current;
-    const layer=markersRef.current;
-    layer.clearLayers();
-    const bounds=[];
-    porLoc.forEach(g=>{
-      if(typeof g.lat!=="number" || typeof g.lng!=="number") return;
+function StaticMap({porLoc,setSel}){
+  const puntos=porLoc
+    .filter(g=>typeof g.lat==="number" && typeof g.lng==="number")
+    .map(g=>{
+      const [x,y]=projectPoint(g.lat,g.lng);
       const first=g.items[0];
-      const color=GRUPO_COLOR[first.grupo] || "#166534";
-      const html=`<div class="map-pin" style="background:${color}">${g.items.length}</div>`;
-      const icon=window.L.divIcon({ html, className:"", iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-14] });
-      const popup=`<b>${g.loc}, ${g.prov}</b><br>${g.items.slice(0,6).map(r=>`${formatFecha(r)} · ${horaEvento(r)} · ${r.cabana}`).join("<br>")}${g.items.length>6?"<br>...":""}`;
-      const marker=window.L.marker([g.lat,g.lng], { icon }).bindPopup(popup);
-      marker.on("click",()=>setSel(first));
-      marker.addTo(layer);
-      bounds.push([g.lat,g.lng]);
+      return {...g,x,y,first,color:GRUPO_COLOR[first.grupo] || "#166534"};
     });
-    if(bounds.length) map.fitBounds(bounds, { padding:[28,28], maxZoom:8 });
-    setTimeout(()=>map.invalidateSize(), 0);
-  }, [locKey,setSel]);
 
-  if(!window.L) return <div style={S.mapFallback}>No se pudo cargar Leaflet. Revisá la conexión y recargá la página.</div>;
-  return <div ref={el} style={S.leafletMap} aria-label="Mapa de localidades"/>;
+  return (
+    <div style={S.mapCard}>
+      <div style={S.mapTitle}>Mapa esquemático de localidades</div>
+      <div style={S.staticMap} aria-label="Mapa esquemático de localidades con remates">
+        <svg viewBox={`0 0 ${MAP.w} ${MAP.h}`} style={S.mapSvg} aria-hidden="true">
+          <rect x="0" y="0" width={MAP.w} height={MAP.h} rx="18" fill="#ecfdf5"/>
+          <path d="M245 72 C315 42 422 54 491 112 C573 180 592 295 521 390 C456 477 316 462 235 383 C149 300 150 124 245 72 Z" fill="#d9f99d" stroke="#166534" strokeWidth="2" opacity=".72"/>
+          <path d="M116 230 C166 188 250 178 314 220 C375 259 388 344 331 400 C275 456 174 437 127 373 C91 323 79 262 116 230 Z" fill="#bbf7d0" stroke="#166534" strokeWidth="1.5" opacity=".62"/>
+          <path d="M432 92 C514 111 611 171 646 253 C680 333 642 423 567 443 C606 360 591 249 524 167 C495 132 463 108 432 92 Z" fill="#bfdbfe" stroke="#166534" strokeWidth="1.5" opacity=".55"/>
+          <path d="M55 294 C104 250 180 252 226 306 C265 351 244 420 191 447 C129 477 54 435 38 367 C31 337 35 313 55 294 Z" fill="#fde68a" stroke="#166534" strokeWidth="1.5" opacity=".54"/>
+          <text x="356" y="250" style={S.mapLabel}>Santa Fe</text>
+          <text x="470" y="340" style={S.mapLabel}>Entre Ríos</text>
+          <text x="132" y="352" style={S.mapLabel}>Córdoba</text>
+          <text x="552" y="216" style={S.mapLabel}>Corrientes</text>
+          <text x="626" y="102" style={S.mapLabel}>Misiones</text>
+        </svg>
+        {puntos.length===0 && <div style={S.mapEmpty}>No hay localidades con estos filtros.</div>}
+        {puntos.map(g=>(
+          <button
+            key={g.loc}
+            type="button"
+            onClick={()=>setSel(g.first)}
+            title={`${g.loc}, ${g.prov}: ${g.items.length} evento${g.items.length===1?"":"s"}`}
+            style={{...S.staticMarker,left:`${(g.x/MAP.w)*100}%`,top:`${(g.y/MAP.h)*100}%`,background:g.color}}
+          >
+            {g.items.length}
+          </button>
+        ))}
+      </div>
+      <div style={S.mapNote}>Mapa estático: los puntos son aproximados y no cargan mapas externos.</div>
+    </div>
+  );
 }
 
 const S = {
@@ -434,8 +429,14 @@ const S = {
   tagEst:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,border:"1px dashed #b0891f",color:"#8a6a10",whiteSpace:"nowrap"},
   tagConf:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,background:"#111",color:"#fff",whiteSpace:"nowrap"},
   mapaWrap:{display:"flex",gap:20,flexWrap:"wrap"},
-  leafletMap:{width:520,height:440,flex:"1 1 520px",minWidth:300,borderRadius:12,boxShadow:"0 2px 14px #0002",overflow:"hidden",border:"1px solid #0001"},
-  mapFallback:{width:520,height:440,flex:"1 1 520px",minWidth:300,borderRadius:12,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",padding:24,textAlign:"center",color:"#666",border:"1px solid #0001"},
+  mapCard:{width:"min(760px,100%)",background:"#fff",border:"1px solid #0001",borderRadius:14,boxShadow:"0 2px 14px #0002",padding:14},
+  mapTitle:{fontSize:13,fontWeight:800,color:"#166534",margin:"0 0 10px",letterSpacing:"0.02em"},
+  staticMap:{position:"relative",width:"100%",aspectRatio:"760 / 470",borderRadius:12,overflow:"hidden",background:"#ecfdf5",border:"1px solid #16653422"},
+  mapSvg:{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"},
+  mapLabel:{fontSize:18,fontWeight:800,fill:"#166534",opacity:.35,fontFamily:"'Georgia',serif"},
+  staticMarker:{position:"absolute",transform:"translate(-50%,-50%)",width:30,height:30,borderRadius:"50%",border:"2px solid #fff",boxShadow:"0 4px 14px #0003",color:"#fff",fontSize:12,fontWeight:800,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0},
+  mapEmpty:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",color:"#777",fontSize:14,fontWeight:700,background:"#ffffffaa"},
+  mapNote:{fontSize:11,color:"#777",marginTop:10,lineHeight:1.35},
   overlay:{position:"fixed",inset:0,background:"#0007",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:20},
   modal:{background:"#fff",borderRadius:16,maxWidth:500,width:"100%",padding:"28px 26px 24px",position:"relative",boxShadow:"0 20px 60px #0004",overflow:"hidden"},
   modalBar:{position:"absolute",top:0,left:0,right:0,height:5},

@@ -1,6 +1,6 @@
 # Calendario de remates ganaderos 2026
 
-Calendario interactivo de remates ganaderos y exposiciones rurales en Santa Fe, Entre Ríos, Córdoba, Corrientes y Misiones. Vista de calendario, lista y mapa, con filtros por firma, provincia y tipo de hacienda.
+Calendario interactivo de remates ganaderos y exposiciones rurales en Santa Fe, Entre Ríos, Córdoba, Corrientes y Misiones. Vista de calendario, lista y mapa estático liviano, con filtros por firma, provincia y tipo de hacienda.
 
 ## Archivos
 
@@ -8,7 +8,7 @@ Calendario interactivo de remates ganaderos y exposiciones rurales en Santa Fe, 
 |---|---|
 | `index.html` | La aplicación completa (React vía CDN). Es lo que se abre en el navegador. |
 | `remates.json` | **Los datos.** Editá este archivo para agregar, cambiar o borrar remates. |
-| `sucursales.geojson` | Fuente de polígonos de zonas de sucursales. La app usa una asignación liviana precalculada para evitar trabas en el navegador. |
+| `sucursales.geojson` | Fuente de polígonos de zonas de sucursales. La app no lo carga en el navegador; usa una asignación liviana precalculada para evitar trabas. |
 | `.nojekyll` | Evita que GitHub Pages procese la carpeta con Jekyll (necesario). |
 
 > **Importante:** el `index.html` lee `remates.json` con `fetch()`. Por seguridad del navegador, esto **NO funciona abriendo el HTML con doble clic** (`file://`). Funciona servido desde un servidor web: GitHub Pages, Netlify, o un servidor local.
@@ -62,7 +62,7 @@ Reglas de los campos:
 - **`prov`** debe ser: `Santa Fe`, `Entre Ríos`, `Córdoba`, `Corrientes` o `Misiones`.
 - **`fecha`** en formato `AAAA-MM-DD`.
 - **`confianza`**: `confirmado` (fecha publicada por la fuente) o `estimado` (proyección de recurrencia — se muestra atenuado y con la etiqueta “estimado”).
-- **`lat` / `lng`**: coordenadas de la localidad, para el mapa.
+- **`lat` / `lng`**: coordenadas de la localidad, para ubicarla aproximadamente en el mapa estático.
 
 En GitHub podés editar `remates.json` directo desde el navegador (botón del lápiz ✏️). Al confirmar el cambio, GitHub Pages actualiza el sitio en 1-2 minutos.
 
