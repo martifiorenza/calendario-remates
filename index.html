@@ -132,6 +132,7 @@ function App(){
   const [fSucursales,setFSucursales]=useState(new Set(SUCURSALES));
   const [soloConfirmados,setSoloConfirmados]=useState(false);
   const [sel,setSel]=useState(null);
+  const [mapLoc,setMapLoc]=useState(null);
 
   useEffect(()=>{
     fetch("remates.json?v="+Date.now())
@@ -183,6 +184,7 @@ function App(){
   const porLocMap={};
   filtrados.forEach(r=>{(porLocMap[r.loc]=porLocMap[r.loc]||{loc:r.loc,prov:r.prov,lat:r.lat,lng:r.lng,items:[]}).items.push(r);});
   const porLoc=Object.values(porLocMap);
+  const selectedMapLoc=mapLoc && porLoc.find(g=>g.loc===mapLoc.loc && g.prov===mapLoc.prov);
   return (
     <div style={S.root}>
       <header style={S.header}>
@@ -270,7 +272,8 @@ function App(){
 
           {vista==="mapa" && (
             <div style={S.mapaWrap}>
-              <StaticMap porLoc={porLoc} setSel={setSel}/>
+              <StaticMap porLoc={porLoc} selectedLoc={selectedMapLoc} setMapLoc={setMapLoc}/>
+              <MapEventsPanel group={selectedMapLoc} setSel={setSel}/>
             </div>
           )}
         </main>
@@ -354,8 +357,9 @@ function CalendarButtons({evento}){
   );
 }
 
-function StaticMap({porLoc,setSel}){
+function StaticMap({porLoc,selectedLoc,setMapLoc}){
   const tiles=mapTiles();
+  const selectedKey=selectedLoc ? `${selectedLoc.loc}|${selectedLoc.prov}` : "";
   const puntos=porLoc
     .filter(g=>typeof g.lat==="number" && typeof g.lng==="number")
     .map(g=>{
@@ -384,9 +388,9 @@ function StaticMap({porLoc,setSel}){
           <button
             key={g.loc}
             type="button"
-            onClick={()=>setSel(g.first)}
+            onClick={()=>setMapLoc(g)}
             title={`${g.loc}, ${g.prov}: ${g.items.length} evento${g.items.length===1?"":"s"}`}
-            style={{...S.staticMarker,left:`${(g.x/MAP.w)*100}%`,top:`${(g.y/MAP.h)*100}%`,background:g.color}}
+            style={{...S.staticMarker,...(`${g.loc}|${g.prov}`===selectedKey?S.staticMarkerActive:{}),left:`${(g.x/MAP.w)*100}%`,top:`${(g.y/MAP.h)*100}%`,background:g.color}}
           >
             {g.items.length}
           </button>
@@ -395,6 +399,43 @@ function StaticMap({porLoc,setSel}){
       </div>
       <div style={S.mapNote}>Mapa estático: carga un fondo fijo y ubica los puntos por latitud/longitud, sin librería interactiva pesada.</div>
     </div>
+  );
+}
+
+function MapEventsPanel({group,setSel}){
+  if(!group) return (
+    <aside style={S.mapPanel}>
+      <div style={S.mapPanelEmpty}>Tocá un punto del mapa para ver acá los eventos de esa localidad.</div>
+    </aside>
+  );
+  const eventos=[...group.items].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  return (
+    <aside style={S.mapPanel}>
+      <div style={S.mapPanelKicker}>Eventos en esta localidad</div>
+      <h2 style={S.mapPanelTitle}>{group.loc}</h2>
+      <div style={S.mapPanelSub}>{group.prov} · {eventos.length} evento{eventos.length===1?"":"s"}</div>
+      <div style={S.mapEventList}>
+        {eventos.map(r=>{
+          const dt=parseFecha(r.fecha);
+          return (
+            <button key={r.id} type="button" onClick={()=>setSel(r)} style={S.mapEventItem}>
+              <div style={{...S.mapEventDate,color:GRUPO_COLOR[r.grupo]}}>
+                <div style={S.mapEventDay}>{dt.getDate()}</div>
+                <div style={S.mapEventMonth}>{MESES[dt.getMonth()].slice(0,3)}</div>
+              </div>
+              <div style={S.mapEventBody}>
+                <div style={S.mapEventTitle}>{r.cabana}</div>
+                <div style={S.mapEventMeta}>{horaEvento(r)} · {r.firma}</div>
+                <div style={S.mapEventTags}>
+                  <span style={{...S.tag,background:GRUPO_COLOR[r.grupo]+"22",color:GRUPO_COLOR[r.grupo]}}>{r.tipo}</span>
+                  {r.confianza==="estimado" ? <span style={S.tagEst}>estimado</span> : <span style={S.tagConf}>confirmado</span>}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </aside>
   );
 }
 
@@ -449,16 +490,31 @@ const S = {
   tag:{fontSize:10.5,fontWeight:700,padding:"3px 8px",borderRadius:20,whiteSpace:"nowrap"},
   tagEst:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,border:"1px dashed #b0891f",color:"#8a6a10",whiteSpace:"nowrap"},
   tagConf:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,background:"#111",color:"#fff",whiteSpace:"nowrap"},
-  mapaWrap:{display:"flex",gap:20,flexWrap:"wrap"},
-  mapCard:{width:"min(900px,100%)",background:"#fff",border:"1px solid #0001",borderRadius:14,boxShadow:"0 2px 14px #0002",padding:14},
+  mapaWrap:{display:"flex",gap:20,flexWrap:"wrap",alignItems:"flex-start"},
+  mapCard:{flex:"1 1 560px",minWidth:300,background:"#fff",border:"1px solid #0001",borderRadius:14,boxShadow:"0 2px 14px #0002",padding:14},
   mapTitle:{fontSize:13,fontWeight:800,color:"#166534",margin:"0 0 10px",letterSpacing:"0.02em"},
   staticMap:{position:"relative",width:"100%",borderRadius:12,overflow:"hidden",background:"#e5e7eb",border:"1px solid #16653422"},
   mapTilesLayer:{position:"absolute",inset:0},
   mapTile:{position:"absolute",userSelect:"none",pointerEvents:"none"},
   staticMarker:{position:"absolute",transform:"translate(-50%,-50%)",width:30,height:30,borderRadius:"50%",border:"2px solid #fff",boxShadow:"0 4px 14px #0005",color:"#fff",fontSize:12,fontWeight:800,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,zIndex:2},
+  staticMarkerActive:{transform:"translate(-50%,-50%) scale(1.18)",boxShadow:"0 0 0 4px #facc15,0 6px 18px #0005",zIndex:3},
   mapEmpty:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",color:"#777",fontSize:14,fontWeight:700,background:"#ffffffaa"},
   mapAttribution:{position:"absolute",right:8,bottom:6,background:"#ffffffe6",color:"#555",fontSize:10,padding:"2px 5px",borderRadius:4},
   mapNote:{fontSize:11,color:"#777",marginTop:10,lineHeight:1.35},
+  mapPanel:{width:330,flex:"0 1 330px",background:"#fff",border:"1px solid #0001",borderRadius:14,boxShadow:"0 2px 14px #0002",padding:16,maxHeight:"calc(100vh - 160px)",overflowY:"auto"},
+  mapPanelEmpty:{minHeight:210,display:"flex",alignItems:"center",justifyContent:"center",textAlign:"center",color:"#777",fontSize:13,lineHeight:1.4,padding:24},
+  mapPanelKicker:{fontSize:10.5,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",color:"#166534",marginBottom:4},
+  mapPanelTitle:{margin:"0 0 2px",fontSize:22,fontWeight:800,fontFamily:"'Georgia',serif",lineHeight:1.1},
+  mapPanelSub:{fontSize:12,color:"#666",marginBottom:14},
+  mapEventList:{display:"flex",flexDirection:"column",gap:8},
+  mapEventItem:{display:"flex",gap:12,alignItems:"flex-start",textAlign:"left",width:"100%",background:"#f8fafc",border:"1px solid #0001",borderRadius:12,padding:"10px 11px",cursor:"pointer"},
+  mapEventDate:{textAlign:"center",width:38,flexShrink:0},
+  mapEventDay:{fontSize:20,fontWeight:800,lineHeight:1,fontFamily:"'Georgia',serif"},
+  mapEventMonth:{fontSize:10,fontWeight:800,textTransform:"uppercase",opacity:.7},
+  mapEventBody:{minWidth:0,flex:1},
+  mapEventTitle:{fontSize:13,fontWeight:800,color:"#1a1a1a",lineHeight:1.2,marginBottom:3},
+  mapEventMeta:{fontSize:11.5,color:"#666",lineHeight:1.25,marginBottom:7},
+  mapEventTags:{display:"flex",gap:5,flexWrap:"wrap"},
   overlay:{position:"fixed",inset:0,background:"#0007",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:20},
   modal:{background:"#fff",borderRadius:16,maxWidth:500,width:"100%",padding:"28px 26px 24px",position:"relative",boxShadow:"0 20px 60px #0004",overflow:"hidden"},
   modalBar:{position:"absolute",top:0,left:0,right:0,height:5},
