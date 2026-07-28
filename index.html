@@ -48,6 +48,15 @@ const GRUPO_COLOR = {
   "Charles":"#BE185D", "Lehmann":"#15803D", "Rosgan":"#B45309",
   "Exposiciones":"#1D4ED8",
 };
+const SOURCE_URLS = [
+  ["e-brangus.com", "https://e-brangus.com/"],
+  ["cooperativalehmann.coop", "https://www.cooperativalehmann.coop/"],
+  ["consignatarias.com.ar", "https://www.consignatarias.com.ar/"],
+  ["rosgan.com.ar", "https://www.rosgan.com.ar/"],
+  ["todolecheria.com.ar", "https://www.todolecheria.com.ar/"],
+  ["exporural.com.ar", "https://www.exporural.com.ar/"],
+  ["farer", "https://farer.org.ar/"]
+];
 const PROV_LIST = ["Santa Fe","Entre Ríos","Córdoba","Corrientes","Misiones"];
 const GRUPOS = ["e-Brangus","AFA","Pastore","Charles","Lehmann","Rosgan","Exposiciones"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
@@ -126,6 +135,13 @@ function calendarLinks(r){
     google:`https://calendar.google.com/calendar/render?${q}`,
     outlook:`https://outlook.live.com/calendar/0/deeplink/compose?${oq}`
   };
+}
+function sourceUrl(r){
+  const direct=r.sourceUrl || r.fuenteUrl || r.fuente_url || r.url || r.link;
+  if(direct) return /^https?:\/\//i.test(direct) ? direct : `https://${direct}`;
+  const fuente=(r.fuente || "").toLowerCase();
+  const found=SOURCE_URLS.find(([needle])=>fuente.includes(needle));
+  return found ? found[1] : "";
 }
 function App(){
   const [REMATES,setRemates]=useState(null);
@@ -307,7 +323,7 @@ function App(){
               <Field k="Firma / mercado" v={sel.firma}/>
               <Field k="Modalidad" v={sel.modalidad}/>
               <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
-              <Field k="Fuente" v={sel.fuente}/>
+              <Field k="Fuente" v={<SourceLink evento={sel}/>}/>
             </div>
             <CalendarButtons evento={sel}/>
           </div>
@@ -315,7 +331,7 @@ function App(){
       )}
 
       <footer style={S.footer}>
-        Datos: e-brangus.com · cooperativalehmann.coop · consignatarias.com.ar · rosgan.com.ar · FARER 2026.
+        Datos: <FooterLink label="e-brangus.com" url="https://e-brangus.com/"/> · <FooterLink label="cooperativalehmann.coop" url="https://www.cooperativalehmann.coop/"/> · <FooterLink label="consignatarias.com.ar" url="https://www.consignatarias.com.ar/"/> · <FooterLink label="rosgan.com.ar" url="https://www.rosgan.com.ar/"/> · <FooterLink label="FARER 2026" url="https://farer.org.ar/"/>.
       </footer>
     </div>
   );
@@ -358,6 +374,16 @@ function DropdownFilter({title,options,selected,setSelected,colorFor,countFor}){
   );
 }
 function Field({k,v}){return <div><div style={S.fieldK}>{k}</div><div style={S.fieldV}>{v}</div></div>;}
+
+function SourceLink({evento}){
+  const url=sourceUrl(evento);
+  if(!url) return evento.fuente || "Fuente no disponible";
+  return <a href={url} target="_blank" rel="noopener noreferrer" style={S.sourceLink}>{evento.fuente}</a>;
+}
+
+function FooterLink({label,url}){
+  return <a href={url} target="_blank" rel="noopener noreferrer" style={S.sourceLink}>{label}</a>;
+}
 
 function ListSummaryCard({evento,onClose}){
   return (
@@ -564,6 +590,7 @@ const S = {
   modalGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px 18px"},
   fieldK:{fontSize:10.5,fontWeight:700,letterSpacing:"0.05em",textTransform:"uppercase",color:"#555",marginBottom:2},
   fieldV:{fontSize:13.5,fontWeight:600,color:"#222",lineHeight:1.3},
+  sourceLink:{color:"#166534",fontWeight:800,textDecoration:"none",borderBottom:"1px solid #16653455"},
   calendarActions:{display:"flex",gap:10,flexWrap:"wrap",marginTop:20,paddingTop:16,borderTop:"1px solid #0001"},
   calendarBtn:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#166534",color:"#fff",fontSize:12.5,fontWeight:800,padding:"9px 12px",borderRadius:10},
   calendarBtnAlt:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#e5f8ec",color:"#166534",fontSize:12.5,fontWeight:800,padding:"9px 12px",borderRadius:10,border:"1px solid #16653433"},
