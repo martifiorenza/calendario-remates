@@ -13,6 +13,7 @@
       "e-brangus.com",
       "cooperativalehmann.coop (PDF 2026)",
       "consignatarias.com.ar",
+      "laganadera.com.ar",
       "rosgan.com.ar",
       "todolecheria.com.ar",
       "FARER 2026",
@@ -103,6 +104,23 @@
       "fuente": "e-brangus.com"
     },
     {
+      "id": "lg-001",
+      "firma": "Coop. La Ganadera Gral. Ramírez Ltda.",
+      "grupo": "La Ganadera",
+      "cabana": "Remate feria en Sociedad Rural de María Grande",
+      "fecha": "2026-07-31",
+      "hora": "",
+      "loc": "María Grande",
+      "prov": "Entre Ríos",
+      "lat": -31.66,
+      "lng": -59.91,
+      "tipo": "Feria",
+      "modalidad": "Contado",
+      "confianza": "confirmado",
+      "fuente": "laganadera.com.ar",
+      "sourceUrl": "http://www.rural.com.uy/remate/31086"
+    },
+    {
       "id": "eb-006",
       "firma": "e-Brangus / Consignataria Hasenkamp",
       "grupo": "e-Brangus",
@@ -119,6 +137,23 @@
       "fuente": "e-brangus.com"
     },
     {
+      "id": "lg-002",
+      "firma": "Coop. La Ganadera Gral. Ramírez Ltda.",
+      "grupo": "La Ganadera",
+      "cabana": "Remate feria Sociedad Rural de La Paz",
+      "fecha": "2026-08-04",
+      "hora": "",
+      "loc": "La Paz",
+      "prov": "Entre Ríos",
+      "lat": -30.75,
+      "lng": -59.65,
+      "tipo": "Feria",
+      "modalidad": "Contado",
+      "confianza": "confirmado",
+      "fuente": "laganadera.com.ar",
+      "sourceUrl": "http://www.rural.com.uy/remate/31087"
+    },
+    {
       "id": "eb-007",
       "firma": "e-Brangus / Coop. Guillermo Lehmann",
       "grupo": "e-Brangus",
@@ -133,6 +168,23 @@
       "modalidad": "Presencial + Streaming (rosgan)",
       "confianza": "confirmado",
       "fuente": "e-brangus.com"
+    },
+    {
+      "id": "lg-003",
+      "firma": "Coop. La Ganadera Gral. Ramírez Ltda.",
+      "grupo": "La Ganadera",
+      "cabana": "Remate feria en instalaciones de Gral. Ramírez",
+      "fecha": "2026-08-06",
+      "hora": "",
+      "loc": "General Ramírez",
+      "prov": "Entre Ríos",
+      "lat": -32.18,
+      "lng": -60.2,
+      "tipo": "Feria",
+      "modalidad": "Contado",
+      "confianza": "confirmado",
+      "fuente": "laganadera.com.ar",
+      "sourceUrl": "http://www.rural.com.uy/remate/31088"
     },
     {
       "id": "eb-008",
