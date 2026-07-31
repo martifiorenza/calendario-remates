@@ -8,11 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --green:#007E19; --green-dark:#045A16; --green-light:#E6F4E8;
+  --green:#166534; --green-dark:#14532D; --green-light:#E5F8EC;
   --orange:#FFA400; --orange-light:#FFF2DC;
   --yellow:#FFDB00;
   --ink:#141818; --ink-2:#1F2622;
-  --paper:#F6F9F5; --card:#FFFFFF; --line:#E1E7E0;
+  --paper:#F3F4F6; --card:#FFFFFF; --line:#E1E7E0;
   --text:#1B211C; --text-mute:#5C665D;
   --font-display:'Barlow Condensed',sans-serif;
   --font-body:'Inter',sans-serif;
@@ -54,7 +54,13 @@ body{font-family:var(--font-body); background:var(--paper); color:var(--text); -
   position:sticky; top:0; z-index:5;
 }
 .topbar-inner{max-width:980px;}
-.back-row{display:flex; justify-content:flex-end; margin-bottom:10px;}
+.brand-row{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:10px;}
+.brand-pill{
+  display:inline-flex; align-items:center; background:#fff; border:1px solid rgba(22,101,52,.14);
+  border-radius:12px; padding:7px 11px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.brand-logo{display:block; height:26px; width:auto;}
 .back-link{
   display:inline-flex; align-items:center; justify-content:center; gap:6px;
   background:var(--green); color:#fff; text-decoration:none; border-radius:9px;
@@ -185,7 +191,10 @@ table.data td.num{font-family:var(--font-mono); font-weight:700;}
   <main class="main">
     <div class="topbar" id="topbar">
       <div class="topbar-inner">
-        <div class="back-row"><a class="back-link" href="index.html">← Volver al calendario</a></div>
+        <div class="brand-row">
+          <div class="brand-pill"><img class="brand-logo" src="agronorte-logo.png" alt="Agronorte"></div>
+          <a class="back-link" href="index.html">← Volver al calendario</a>
+        </div>
         <div class="eyebrow" id="eyebrow">Agronorte</div>
         <div class="page-title" id="pageTitle">Inicio</div>
         <div class="page-desc" id="pageDesc"></div>
