@@ -216,6 +216,7 @@ function App(){
           {[["calendario","Calendario"],["lista","Lista"],["mapa","Mapa"]].map(([k,label])=>(
             <button key={k} onClick={()=>setVista(k)} style={{...S.tab,...(vista===k?S.tabActive:{})}}>{label}</button>
           ))}
+          <a href="Sistemas_Ganaderos_Agronorte_App.html" style={S.tabLink}>Sistemas ganaderos</a>
         </div>
       </header>
 
@@ -508,6 +509,7 @@ const S = {
   tabs:{display:"flex",gap:4,background:"#0000000d",padding:4,borderRadius:12},
   tab:{border:"none",background:"transparent",padding:"8px 16px",borderRadius:9,fontSize:13,fontWeight:600,cursor:"pointer",color:"#555"},
   tabActive:{background:"#fff",color:"#111",boxShadow:"0 1px 3px #0002"},
+  tabLink:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#166534",color:"#fff",padding:"8px 16px",borderRadius:9,fontSize:13,fontWeight:800,whiteSpace:"nowrap",boxShadow:"0 1px 3px #0002"},
   body:{display:"flex",gap:0,alignItems:"flex-start"},
   sidebar:{width:236,flexShrink:0,padding:"20px 18px",position:"sticky",top:120,maxHeight:"calc(100vh - 120px)",overflowY:"auto"},
   filterBox:{background:"#fff",border:"1px solid #0001",borderRadius:12,marginBottom:10,overflow:"hidden"},

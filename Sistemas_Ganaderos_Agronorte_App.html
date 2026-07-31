@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistemas Productivos Ganaderos y Tambo — Agronorte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#007E19; --green-dark:#045A16; --green-light:#E6F4E8;
+  --orange:#FFA400; --orange-light:#FFF2DC;
+  --yellow:#FFDB00;
+  --ink:#141818; --ink-2:#1F2622;
+  --paper:#F6F9F5; --card:#FFFFFF; --line:#E1E7E0;
+  --text:#1B211C; --text-mute:#5C665D;
+  --font-display:'Barlow Condensed',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{font-family:var(--font-body); background:var(--paper); color:var(--text); -webkit-font-smoothing:antialiased;}
+::selection{background:var(--yellow); color:var(--ink);}
+.app{display:flex; min-height:100vh;}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:272px; flex-shrink:0; background:var(--ink); color:#EDEFEC;
+  display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.sidebar-logo{padding:22px 20px 14px; }
+.sidebar-logo .card-wrap{background:#fff; border-radius:10px; padding:10px 14px; display:inline-block;}
+.sidebar-logo img{height:26px; display:block;}
+.sidebar-sub{padding:0 20px 16px; font-size:12.5px; color:#9AA39B; line-height:1.5; border-bottom:1px solid #262E28;}
+.nav{list-style:none; margin:0; padding:10px 12px; flex:1;}
+.nav-group-label{font-family:var(--font-display); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#7C867D; padding:14px 10px 6px;}
+.nav-item{
+  display:flex; align-items:center; gap:11px; padding:10px 10px; border-radius:9px; cursor:pointer;
+  font-size:14.5px; font-weight:500; color:#CBD1CA; transition:background .15s ease, color .15s ease;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:#20281F; color:#fff;}
+.nav-item.active{background:#20281F; color:#fff;}
+.nav-dot{width:26px; height:26px; border-radius:7px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:700; color:#fff;}
+.nav-item.active .nav-dot{box-shadow:0 0 0 2px rgba(255,255,255,.25);}
+.sidebar-foot{padding:16px 20px 20px; font-size:11px; color:#6D766E; border-top:1px solid #262E28; line-height:1.6;}
+
+/* ---------- MAIN ---------- */
+.main{flex:1; min-width:0; display:flex; flex-direction:column;}
+.topbar{
+  background:var(--card); border-bottom:1px solid var(--line); padding:26px 40px 0;
+  position:sticky; top:0; z-index:5;
+}
+.topbar-inner{max-width:980px;}
+.back-row{display:flex; justify-content:flex-end; margin-bottom:10px;}
+.back-link{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  background:var(--green); color:#fff; text-decoration:none; border-radius:9px;
+  padding:8px 12px; font-size:13px; font-weight:700; box-shadow:0 1px 3px rgba(0,0,0,.14);
+}
+.back-link:hover{background:var(--green-dark);}
+.eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; color:var(--green-dark); text-transform:uppercase; font-weight:700;}
+.page-title{font-family:var(--font-display); font-weight:800; font-size:44px; line-height:1; margin:6px 0 8px; text-transform:uppercase; letter-spacing:.01em;}
+.page-desc{font-size:15px; color:var(--text-mute); max-width:640px; margin-bottom:20px; line-height:1.5;}
+.tabbar{display:flex; gap:4px; margin-top:6px;}
+.tabbtn{
+  font-family:var(--font-body); font-size:14px; font-weight:600; color:var(--text-mute);
+  background:none; border:none; padding:12px 4px; margin-right:22px; cursor:pointer;
+  border-bottom:3px solid transparent; transition:color .15s ease, border-color .15s ease;
+}
+.tabbtn:hover{color:var(--ink);}
+.tabbtn.active{color:var(--ink); border-bottom-color:var(--green);}
+
+.content{padding:32px 40px 80px; max-width:980px;}
+.content-inner{animation:fadeIn .28s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+h3.sec{font-family:var(--font-display); font-size:22px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; margin:34px 0 12px; color:var(--ink);}
+h3.sec:first-child{margin-top:0;}
+h4.sub{font-size:15.5px; font-weight:700; margin:20px 0 8px; color:var(--ink);}
+p{font-size:15px; line-height:1.65; color:var(--text); margin:0 0 14px;}
+ul.list, ol.list{margin:0 0 16px; padding-left:20px;}
+ul.list li, ol.list li{font-size:15px; line-height:1.6; margin-bottom:7px; color:var(--text);}
+strong{color:var(--ink);}
+
+.callout{background:var(--green-light); border-radius:12px; padding:18px 20px; margin:18px 0;}
+.callout.orange{background:var(--orange-light);}
+.callout.dark{background:var(--ink); color:#fff;}
+.callout.dark p{color:#E7EAE6;}
+.callout-label{font-family:var(--font-mono); font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--green-dark); margin-bottom:6px;}
+.callout.orange .callout-label{color:#9A5F00;}
+.callout.dark .callout-label{color:var(--yellow);}
+.callout p{margin:0; font-size:14.5px;}
+
+table.data{width:100%; border-collapse:collapse; margin:14px 0 22px; font-size:14px;}
+table.data th{font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; text-align:left; background:var(--ink); color:#fff; padding:9px 12px;}
+table.data td{padding:10px 12px; border-bottom:1px solid var(--line); color:var(--text);}
+table.data tr:nth-child(even) td{background:#FAFBF9;}
+table.data td.num{font-family:var(--font-mono); font-weight:700;}
+
+.stat-row{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 26px;}
+.stat-card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; flex:1; min-width:150px;}
+.stat-num{font-family:var(--font-mono); font-weight:700; font-size:26px; color:var(--green-dark);}
+.stat-num.o{color:#B5650A;}
+.stat-lbl{font-size:12.5px; color:var(--text-mute); margin-top:4px; line-height:1.4;}
+
+.gauge-wrap{display:flex; align-items:center; gap:22px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin:20px 0 26px;}
+.gauge-text{flex:1;}
+.gauge-value{font-family:var(--font-mono); font-weight:700; font-size:28px; color:var(--ink);}
+.gauge-label{font-size:13px; color:var(--text-mute); margin-top:4px; line-height:1.4; max-width:360px;}
+
+.pill{display:inline-block; font-family:var(--font-mono); font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; letter-spacing:.03em;}
+.pill.fav{background:var(--green-light); color:var(--green-dark);}
+.pill.mix{background:var(--orange-light); color:#9A5F00;}
+.pill.dem{background:#FBE7E4; color:#A13B2E;}
+
+.twocol{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:18px 0 26px;}
+@media (max-width:760px){.twocol{grid-template-columns:1fr;}}
+.col-card{border-radius:14px; padding:20px 22px;}
+.col-card.good{background:var(--green-light);}
+.col-card.bad{background:#FBE7E4;}
+.col-title{font-family:var(--font-display); font-size:17px; font-weight:800; letter-spacing:.02em; text-transform:uppercase; margin-bottom:10px;}
+.col-card.good .col-title{color:var(--green-dark);}
+.col-card.bad .col-title{color:#A13B2E;}
+.col-card ul{margin:0; padding-left:18px;}
+.col-card li{font-size:14px; margin-bottom:8px; line-height:1.5;}
+
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px;}
+.chip{font-family:var(--font-mono); font-size:12px; padding:5px 11px; border-radius:7px; background:#EEF2ED; color:var(--text-mute); font-weight:600;}
+
+.footer-src{font-size:12px; color:var(--text-mute); font-style:italic; border-top:1px solid var(--line); padding-top:14px; margin-top:30px; line-height:1.6;}
+
+/* HOME */
+.home-hero{padding:6px 0 10px;}
+.home-hero h1{font-family:var(--font-display); font-weight:800; font-size:52px; line-height:1.02; text-transform:uppercase; margin:10px 0 14px; max-width:760px;}
+.home-hero p.lead{font-size:17px; color:var(--text-mute); max-width:600px; line-height:1.6; margin-bottom:0;}
+.grid6{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px;}
+@media (max-width:900px){.grid6{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:600px){.grid6{grid-template-columns:1fr;}}
+.sys-card{
+  background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px; cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease; position:relative; overflow:hidden;
+}
+.sys-card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(20,24,24,.09);}
+.sys-card .tag{width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-weight:700; font-size:13px; color:#fff; margin-bottom:14px;}
+.sys-card h4{font-family:var(--font-display); font-size:21px; font-weight:800; text-transform:uppercase; margin:0 0 6px;}
+.sys-card p{font-size:13.5px; color:var(--text-mute); margin:0;}
+.sys-card .arrow{position:absolute; right:18px; top:18px; font-size:18px; color:var(--line); transition:color .15s ease;}
+.sys-card:hover .arrow{color:var(--green);}
+
+/* Mobile nav */
+.mobile-topbar{display:none;}
+@media (max-width:880px){
+  .sidebar{position:fixed; left:0; top:0; height:100vh; z-index:30; transform:translateX(-100%); transition:transform .2s ease; width:82vw; max-width:300px;}
+  .sidebar.open{transform:translateX(0);}
+  .mobile-topbar{display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--ink); position:sticky; top:0; z-index:20;}
+  .mobile-topbar img{height:18px;}
+  .burger{width:34px; height:34px; border-radius:8px; background:#20281F; border:none; color:#fff; font-size:18px; cursor:pointer;}
+  .overlay{display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:25;}
+  .overlay.show{display:block;}
+  .topbar{padding:20px 20px 0;}
+  .content{padding:24px 20px 60px;}
+  .page-title{font-size:32px;}
+  .home-hero h1{font-size:34px;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important;}}
+</style>
+</head>
+<body>
+<div class="mobile-topbar">
+  <button class="burger" id="burgerBtn" aria-label="Abrir menú">&#9776;</button>
+  <img src="data:image/png;base64,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" alt="Agronorte">
+</div>
+<div class="overlay" id="overlay"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><div class="card-wrap"><img src="data:image/png;base64,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" alt="Agronorte"></div></div>
+    <div class="sidebar-sub">Guía interna para entender al cliente ganadero y tambero antes de hablar de máquinas.</div>
+    <ul class="nav" id="navList"></ul>
+    <div class="sidebar-foot">Basado en los módulos internos de Sistemas Productivos Ganaderos y en material de cátedra de Sistemas de Producción Animal: Bovinos (FCA-UNR, 2026).</div>
+  </nav>
+  <main class="main">
+    <div class="topbar" id="topbar">
+      <div class="topbar-inner">
+        <div class="back-row"><a class="back-link" href="index.html">← Volver al calendario</a></div>
+        <div class="eyebrow" id="eyebrow">Agronorte</div>
+        <div class="page-title" id="pageTitle">Inicio</div>
+        <div class="page-desc" id="pageDesc"></div>
+        <div class="tabbar" id="tabbar"></div>
+      </div>
+    </div>
+    <div class="content"><div class="content-inner" id="content"></div></div>
+  </main>
+</div>
+<script>
+const COLORS = { green:"#007E19", orange:"#FFA400", ink:"#141818" };
+
+function gaugeSVG(value, max, unit, opts){
+  opts = opts || {};
+  const color = opts.color || COLORS.green;
+  const pct = Math.max(0, Math.min(100, (value/max)*100));
+  const cx=100, cy=100, r=80;
+  const totalLen = Math.PI * r;
+  const dash = (pct/100) * totalLen;
+  const angle = 180 - (pct/100)*180;
+  const rad = angle * Math.PI/180;
+  const nx = cx + (r-18) * Math.cos(rad);
+  const ny = cy - (r-18) * Math.sin(rad);
+  const valText = (Number.isInteger(value) ? value : value.toString().replace('.', ','));
+  return `
+  <svg viewBox="0 0 200 118" width="150" height="89">
+    <path d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="#E7EBE6" stroke-width="15" stroke-linecap="round"/>
+    <path d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="${color}" stroke-width="15" stroke-linecap="round"
+          stroke-dasharray="${dash.toFixed(1)} ${totalLen.toFixed(1)}"/>
+    <circle cx="20" cy="100" r="3.4" fill="#B9C1B7"/>
+    <circle cx="100" cy="20" r="3.4" fill="#B9C1B7"/>
+    <circle cx="180" cy="100" r="3.4" fill="#B9C1B7"/>
+    <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${COLORS.ink}" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="7" fill="${COLORS.ink}"/>
+  </svg>`;
+}
+
+function gaugeBlock(value, max, unit, label, color){
+  const displayVal = (typeof value === 'number' && value % 1 !== 0) ? value.toString().replace('.', ',') : value;
+  return `<div class="gauge-wrap">
+    ${gaugeSVG(value, max, unit, {color: color})}
+    <div class="gauge-text">
+      <div class="gauge-value">${displayVal}${unit ? ' ' + unit : ''}</div>
+      <div class="gauge-label">${label}</div>
+    </div>
+  </div>`;
+}
+
+const SYSTEMS = [
+  {
+    id:"cria", name:"Cría", tag:"CR", color:COLORS.green,
+    short:"Produce el ternero destetado.",
+    gauge:{value:85, max:100, unit:"%", label:"% de destete — objetivo de manejo de un rodeo eficiente", color:COLORS.green},
+    tabs:{
+      principios: `
+        <h3 class="sec">Qué es</h3>
+        <p>La cría transforma un <strong>vientre</strong> en un <strong>ternero destetado</strong>. Es el primer eslabón de toda la cadena, tanto para carne como para tambo: la vaquillona de reposición de un tambo también nace y se cría antes de entrar en producción.</p>
+        <div class="chip-row">
+          <span class="chip">Vientre</span><span class="chip">→</span><span class="chip">Preñez</span><span class="chip">→</span>
+          <span class="chip">Parto</span><span class="chip">→</span><span class="chip">Lactancia</span><span class="chip">→</span><span class="chip">Destete</span>
+        </div>
+        <h3 class="sec">El animal en kilos</h3>
+        <table class="data"><tr><th>Momento</th><th>Peso vivo</th><th>Qué ocurre</th></tr>
+          <tr><td>Nacimiento</td><td class="num">25-40 kg</td><td>El ternero nace y depende de la madre.</td></tr>
+          <tr><td>Destete</td><td class="num">160-220 kg</td><td>Se separa de la madre; puede venderse o continuar en la empresa.</td></tr>
+        </table>
+        <h3 class="sec">Categorías básicas</h3>
+        <ul class="list">
+          <li><strong>Vaca:</strong> hembra que ya parió.</li>
+          <li><strong>Vaquillona:</strong> hembra destetada que todavía no parió.</li>
+          <li><strong>Toro:</strong> macho entero destinado a reproducción.</li>
+          <li><strong>Ternero/a:</strong> cría al pie de la madre, antes del destete.</li>
+        </ul>
+        <h3 class="sec">Servicio continuo vs. estacionado</h3>
+        <p>Un servicio <strong>estacionado</strong> (los toros entran y salen del rodeo en una ventana acotada, típicamente 3 meses) concentra las pariciones, permite planificar sanidad, destete y venta, y produce terneros más parejos que un servicio continuo. La cátedra usa como ejemplo típico un <strong>servicio estacionado octubre-noviembre-diciembre</strong>.</p>
+      `,
+      datos: `
+        <h3 class="sec">KPI centrales</h3>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">85-90%</div><div class="stat-lbl">% destete en un rodeo bien manejado</div></div>
+          <div class="stat-card"><div class="stat-num o">180 kg</div><div class="stat-lbl">Peso al destete, referencia</div></div>
+          <div class="stat-card"><div class="stat-num">283 días</div><div class="stat-lbl">Duración de la gestación</div></div>
+        </div>
+        <h3 class="sec">Fórmulas de índices (cátedra)</h3>
+        <table class="data"><tr><th>Índice</th><th>Fórmula</th></tr>
+          <tr><td>Reposición anual (%)</td><td>(Refugo por ventas + mortandad) / Vientres entorados × 100</td></tr>
+          <tr><td>Rendimiento de los vientres (%)</td><td>% Destete − % Reposición</td></tr>
+          <tr><td>Relación vientres/stock (%)</td><td>Vientres / Total de animales × 100</td></tr>
+          <tr><td>Rendimiento del rodeo (%)</td><td>Rendimiento de los vientres × Relación vientres/stock</td></tr>
+          <tr><td>Participación de terneros en ventas (%)</td><td>Terneros vendidos / Total vendido × 100</td></tr>
+          <tr><td>Producción anual (kg/ha)</td><td>(Salidas − Entradas ± Dif. inventario) / Superficie</td></tr>
+          <tr><td>Eficiencia del stock (%)</td><td>Producción anual (kg/ha) / Carga animal (kg/ha) × 100</td></tr>
+        </table>
+        <h3 class="sec">Por qué el servicio se ubica en primavera-verano</h3>
+        <p>El objetivo es lograr un ternero por vaca por año. De los 365 días del ciclo, ~283 son de gestación: quedan apenas <strong>82 días</strong> para volver a preñarse, de los cuales el organismo necesita ~40 días de <strong>anestro posparto</strong> solo para recuperar el útero. Cuánto tarde en salir de ese anestro depende de la condición corporal — que depende de cuánto y qué tan bien está comiendo, es decir, de la curva de pasto.</p>
+        <div class="callout dark">
+          <div class="callout-label">Sincronización</div>
+          <p>Un servicio octubre-diciembre da partos concentrados a fines de invierno / inicio de primavera del año siguiente — justo cuando el pasto vuelve a crecer y la vaca necesita más energía para producir leche y volver a preñarse. El requerimiento de la vaca sube junto con la lactancia y llega a su pico cuando el pasto todavía viene creciendo; tras el destete (~7 meses posparto) el requerimiento cae fuerte, coincidiendo con la caída de la oferta de pasto en otoño-invierno.</p>
+        </div>
+      `,
+      manejo: `
+        <h3 class="sec">Distribución de las pariciones</h3>
+        <p>No da lo mismo que las vacas se preñen al principio, en el medio o al final de la temporada de servicio. Un rodeo con partos concentrados <strong>"de cabeza"</strong> desteta terneros más parejos y más pesados que uno con partos <strong>"a la cola"</strong>, porque todos tienen más días de pasto de calidad al momento del destete. Corregir esta distribución es una de las prácticas de manejo con más impacto en los kilos totales producidos por hectárea.</p>
+        <h3 class="sec">Condición corporal</h3>
+        <p>Es una escala visual/táctil del estado de reservas de la vaca. Sirve para anticipar, <strong>antes del servicio</strong>, si una vaca va a tener problemas para volver a preñarse — en lugar de descubrirlo recién en el tacto. Una vaca flaca al parto tarda más en salir del anestro, lo que reduce directamente la tasa de preñez del rodeo (sobre todo en el 2° servicio de las vaquillonas de primera cría).</p>
+        <h3 class="sec">Preguntas para el productor</h3>
+        <ul class="list">
+          <li>¿Cuándo entran los toros y cuánto dura el servicio?</li>
+          <li>¿Qué % de preñez y destete lográs, y cómo se distribuyen las pariciones?</li>
+          <li>¿Mirás la condición corporal antes del servicio?</li>
+          <li>¿Retenés hembras o vendés al destete?</li>
+        </ul>
+        <div class="callout">
+          <div class="callout-label">Riesgo dominante</div>
+          <p>Clima y forraje disponible + stock de vientres. Un ternero caro en el mercado no corrige una baja eficiencia reproductiva propia.</p>
+        </div>
+      `,
+      actualidad: `
+        <div class="chip-row"><span class="pill fav">FAVORABLE</span></div>
+        <p>Es uno de los sistemas mejor posicionados de 2026: vende el producto que más se valorizó (el ternero), aunque depende de la eficiencia reproductiva propia y de que el clima permita sostener el rodeo.</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">+64,3%</div><div class="stat-lbl">Suba interanual del ternero 160-180 kg (may-26)</div></div>
+          <div class="stat-card"><div class="stat-num o">+37%</div><div class="stat-lbl">Margen de cría sobre su promedio histórico (modelo SAGyP)</div></div>
+          <div class="stat-card"><div class="stat-num">+35%</div><div class="stat-lbl">Mejora del poder de compra de hacienda/maquinaria (CONINAGRO)</div></div>
+        </div>
+        <h3 class="sec">Fortaleza y tensión</h3>
+        <p><strong>Fortaleza:</strong> ternero valorizado, margen histórico alto. <strong>Tensión:</strong> clima, stock de vientres y una eventual moderación de precios — el margen viene bajando desde el máximo de noviembre 2025.</p>
+        <div class="callout orange">
+          <div class="callout-label">Pregunta para abrir la conversación</div>
+          <p>¿El buen precio actual te lleva a vender más, retener hembras, aumentar carga o invertir para producir más terneros? La respuesta revela si el productor ve esto como oportunidad coyuntural o como etapa de expansión.</p>
+        </div>
+      `
+    }
+  },
+  {
+    id:"recria", name:"Recría", tag:"RC", color:COLORS.green,
+    short:"Fabrica kilos de crecimiento.",
+    gauge:{value:0.55, max:1.0, unit:"kg/día", label:"ADPV de un sistema pastoril eficiente (ejemplo de cátedra)", color:COLORS.green},
+    tabs:{
+      principios: `
+        <h3 class="sec">Qué es</h3>
+        <p>La recría recibe un ternero destetado (o una ternera de reposición) y le agrega <strong>kilos de crecimiento</strong> hasta el peso o desarrollo definido para pasar a terminación, venderse como recriado, o —en hembras de reposición— entrar en servicio.</p>
+        <div class="chip-row">
+          <span class="chip">Destete 180 kg</span><span class="chip">→</span><span class="chip">Recría</span><span class="chip">→</span><span class="chip">300-400 kg</span>
+        </div>
+        <h3 class="sec">Sistemas de recría</h3>
+        <table class="data"><tr><th>Sistema</th><th>Base</th><th>Fortaleza</th><th>Desafío</th></tr>
+          <tr><td>Campo natural</td><td>Pastizal natural</td><td>Bajo costo diario</td><td>Estacionalidad</td></tr>
+          <tr><td>Pasturas</td><td>Implantadas</td><td>Mayor forraje y carga</td><td>Costo de implantación</td></tr>
+          <tr><td>Verdeos</td><td>Cultivo estacional</td><td>Cubre baches de oferta</td><td>Dependencia climática</td></tr>
+          <tr><td>Pastoril + suplemento</td><td>Pasto + grano</td><td>Corrige déficits, acelera</td><td>Costo del suplemento</td></tr>
+          <tr><td>Corral de recría</td><td>Dieta formulada</td><td>Control y velocidad</td><td>Costo de dieta/infraestructura</td></tr>
+        </table>
+        <h3 class="sec">Ternero propio vs. comprado</h3>
+        <p>Un ternero propio <strong>no es gratis</strong>: si podría venderse hoy, retenerlo para recriar implica invertir el valor que la empresa deja de cobrar (costo de oportunidad). Cuando el ternero de mercado está caro, la recría necesita producir kilos de bajo costo para diluir ese valor de entrada.</p>
+      `,
+      datos: `
+        <h3 class="sec">La fórmula del negocio</h3>
+        <div class="callout dark"><div class="callout-label">ADPV</div><p style="font-family:var(--font-mono); font-size:16px;">ADPV = (Peso de salida − Peso de entrada) / Días de recría</p></div>
+        <h3 class="sec">Ejemplo de cátedra: tres formas de fabricar kilos</h3>
+        <table class="data"><tr><th>Sistema</th><th>Días</th><th>ADPV</th><th>Salida</th><th>Kg producidos</th></tr>
+          <tr><td>A · Extensivo</td><td class="num">300</td><td class="num">0,30 kg/d</td><td class="num">270 kg</td><td class="num">90 kg</td></tr>
+          <tr><td>B · Pastoril eficiente</td><td class="num">240</td><td class="num">0,55 kg/d</td><td class="num">312 kg</td><td class="num">132 kg</td></tr>
+          <tr><td>C · Intensificado</td><td class="num">180</td><td class="num">0,80 kg/d</td><td class="num">324 kg</td><td class="num">144 kg</td></tr>
+        </table>
+        <p>El sistema C produce más rápido, pero eso no demuestra que sea el más rentable: hay que comparar costo total de los kilos, tierra, capital y precio esperado de salida.</p>
+        <h3 class="sec">Costo por kilo producido</h3>
+        <p style="font-family:var(--font-mono); font-size:15px;">Costo/kg = Costos atribuibles a la recría / Kilos efectivamente producidos</p>
+        <p>Componentes: alimentación, sanidad, personal, maquinaria y servicios, estructura, capital y tierra.</p>
+      `,
+      manejo: `
+        <h3 class="sec">El costo del día improductivo</h3>
+        <p>Un animal que permanece muchos días manteniendo peso sigue consumiendo alimento, ocupando superficie e inmovilizando capital, pero genera pocos kilos adicionales. <strong>ADPV mide velocidad, no rentabilidad</strong>: hay que mirarlo siempre junto con costo/kg, kg/ha y capital inmovilizado.</p>
+        <h3 class="sec">Recría de hembras de reposición</h3>
+        <p>Cuando la hembra será futura madre, el objetivo no es vender kilos: es alcanzar el desarrollo reproductivo en el momento planificado (edad al primer servicio). El KPI físico de crecimiento queda subordinado al objetivo reproductivo.</p>
+        <h3 class="sec">Preguntas para el productor</h3>
+        <ul class="list">
+          <li>¿Los terneros son propios o comprados?</li>
+          <li>¿Con cuántos kilos entran y con cuántos salen?</li>
+          <li>¿Cuánto te cuesta producir el kilo adicional?</li>
+          <li>¿En qué momento del año se cae la ganancia de peso?</li>
+        </ul>
+        <div class="callout"><div class="callout-label">Riesgo dominante</div><p>Bache forrajero estacional + costo de reposición cuando el ternero está caro.</p></div>
+      `,
+      actualidad: `
+        <div class="chip-row"><span class="pill mix">MIXTA</span></div>
+        <p>Los kilos pastoriles todavía son competitivos, pero el ternero caro y el capital inmovilizado presionan el negocio de quien compra reposición.</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num o">1,45</div><div class="stat-lbl">Relación ternero/novillo, may-26 (por encima del promedio de 10 años)</div></div>
+          <div class="stat-card"><div class="stat-num o">1,27</div><div class="stat-lbl">Relación ternero/novillito, may-26</div></div>
+        </div>
+        <p>Cuando la reposición está cara, la eficiencia productiva vale más: cada kilo agregado tiene que compensar una diferencia de precio inicial más alta que en años anteriores.</p>
+      `
+    }
+  },
+  {
+    id:"invernada", name:"Invernada y Terminación", tag:"IT", color:COLORS.green,
+    short:"Lleva el animal a condición comercial.",
+    gauge:{value:65, max:100, unit:"%", label:"Costo del ternero como % del valor final del novillo (modelos 2026)", color:COLORS.green},
+    tabs:{
+      principios: `
+        <h3 class="sec">Qué es</h3>
+        <p>Recibe un animal recriado y decide hasta qué peso y condición corporal seguir agregando kilos antes de venderlo para faena. La <strong>invernada</strong> agrega peso; la <strong>terminación</strong> completa el grado de engrasamiento comercial.</p>
+        <h3 class="sec">Sistemas de terminación</h3>
+        <table class="data"><tr><th>Sistema</th><th>Base</th><th>Velocidad</th><th>Desafío</th></tr>
+          <tr><td>Pastoril</td><td>Pasturas/verdeos</td><td>Media</td><td>Estacionalidad y duración</td></tr>
+          <tr><td>Pastoril suplementado</td><td>Pasto + grano</td><td>Media/alta</td><td>Que el suplemento se pague</td></tr>
+          <tr><td>Corral de terminación</td><td>Dieta formulada</td><td>Alta</td><td>Costo de dieta y conversión</td></tr>
+          <tr><td>Combinado</td><td>Recría/pasto + corral final</td><td>Optimizable</td><td>Momento de ingreso al corral</td></tr>
+        </table>
+        <h3 class="sec">Peso adulto, peso de faena y "animal terminado"</h3>
+        <p>El peso adulto es el techo genético del animal. Como referencia: los <strong>toros</strong> adultos pesan ~1,5 veces el peso de una vaca adulta del mismo biotipo; los <strong>novillos</strong> castrados quedan en un punto intermedio, ~1,3 veces. En invernada, casi ningún animal llega a faenarse en su peso adulto: se faena típicamente entre el <strong>70% y 75%</strong> del peso adulto.</p>
+        <p>Un animal está terminado cuando acumuló la grasa de cobertura que pide el mercado, medida entre la 12ª y 13ª costilla: el consumo interno acepta un mínimo de <strong>6-8 mm</strong>, y <strong>8-12 mm</strong> para una terminación con buen marmoleo.</p>
+      `,
+      datos: `
+        <h3 class="sec">La fórmula del negocio</h3>
+        <p style="font-family:var(--font-mono); font-size:14.5px;">Valor de venta − Valor de compra − Costos productivos − Comercialización − Financiamiento = Resultado</p>
+        <h3 class="sec">Dato estructural (2026)</h3>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num o">59-74%</div><div class="stat-lbl">Del valor final del novillo que representa la compra del ternero, según región (modelos may-26)</div></div>
+          <div class="stat-card"><div class="stat-num">1,45</div><div class="stat-lbl">Relación ternero/novillo, may-26</div></div>
+        </div>
+        <p>Esto muestra por qué la reposición domina la sensibilidad del margen del invernador — no el precio de venta final, sino cuánto costó entrar el animal.</p>
+        <h3 class="sec">El costo de los últimos kilos</h3>
+        <p style="font-family:var(--font-mono); font-size:14px;">Valor adicional esperado − Costo adicional − Tiempo y riesgo = Margen marginal</p>
+        <p>Pasado el 75% del peso adulto, la deposición de grasa es alta en relación al tejido magro: la ganancia de peso se vuelve costosa y la eficiencia de conversión cae. Una ADPV alta no garantiza un buen negocio si el kilo final requiere mucha energía.</p>
+      `,
+      manejo: `
+        <h3 class="sec">Tres sistemas, mismo peso final, distinto resultado</h3>
+        <table class="data"><tr><th>Variable</th><th>Pastoril</th><th>Pastoril + supl.</th><th>Corral</th></tr>
+          <tr><td>Duración</td><td class="num">180 días</td><td class="num">130 días</td><td class="num">100 días</td></tr>
+          <tr><td>ADPV</td><td class="num">0,67 kg/d</td><td class="num">0,92 kg/d</td><td class="num">1,20 kg/d</td></tr>
+          <tr><td>Capital por tiempo</td><td>Alto</td><td>Medio</td><td>Menor duración</td></tr>
+          <tr><td>Riesgo principal</td><td>Estacionalidad</td><td>Que no pague el supl.</td><td>Dieta cara/mala conversión</td></tr>
+        </table>
+        <p>El corral llega antes al mismo peso, pero eso no demuestra que deje más margen: hay que integrar costo/kg, capital, tierra y precio de salida.</p>
+        <h3 class="sec">Preguntas para el productor</h3>
+        <ul class="list">
+          <li>¿A qué precio comprás y qué relación compra/venta seguís?</li>
+          <li>¿Con qué peso y grado de terminación vendés?</li>
+          <li>¿Terminás a pasto, suplementado o a corral? ¿Por qué ese sistema?</li>
+          <li>¿Cuánto te cuesta producir el kilo adicional?</li>
+        </ul>
+        <div class="callout"><div class="callout-label">Riesgo dominante</div><p>Reposición cara (relación compra/venta desfavorable) + costo del alimento en la etapa final.</p></div>
+      `,
+      actualidad: `
+        <div class="chip-row"><span class="pill dem">EXIGENTE</span></div>
+        <p>Es el sistema más presionado del momento: compra caro (ternero valorizado) y su margen está por debajo de su promedio histórico.</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num o">-4%</div><div class="stat-lbl">Margen de invernada de alta producción vs. su promedio histórico (SAGyP)</div></div>
+          <div class="stat-card"><div class="stat-num">+50,7%</div><div class="stat-lbl">Suba interanual del novillo (may-26) — menor que la del ternero</div></div>
+        </div>
+        <p>SAGyP atribuye la presión a un novillo rezagado frente al ternero, el costo de verdeos/insumos y la relación compra/venta. Cuando la reposición está cara, la eficiencia productiva (ADPV, días, costo/kg) vale más que nunca.</p>
+      `
+    }
+  },
+  {
+    id:"feedlot", name:"Feedlot", tag:"FL", color:COLORS.green,
+    short:"Produce kilos intensivamente a corral.",
+    gauge:{value:2.3, max:3.65, unit:"ciclos/año", label:"Ciclos/año del modelo oficial 2026 (máximo teórico ~3,65)", color:COLORS.green},
+    tabs:{
+      principios: `
+        <h3 class="sec">Qué es</h3>
+        <p>Un sistema intensivo que confina animales sin acceso a pastoreo y transforma alimento, capital y gestión diaria en kilos de carne. No es solo "tener animales encerrados": es una <strong>fábrica biológica</strong> que compra o recibe capital animal, incorpora alimento y tiempo, y vende un animal terminado.</p>
+        <h3 class="sec">Tipos de negocio</h3>
+        <table class="data"><tr><th>Tipo</th><th>Cómo funciona</th><th>Variable dominante</th></tr>
+          <tr><td>Por administración</td><td>El operador compra, engorda y vende</td><td>Compra/venta + alimentación + capital</td></tr>
+          <tr><td>Hotelería</td><td>El dueño de la hacienda paga por el servicio</td><td>Tarifa, ocupación, eficiencia</td></tr>
+          <tr><td>Integrado agroganadero</td><td>Combina agricultura, forraje propio y feedlot</td><td>Costo interno del alimento</td></tr>
+          <tr><td>Estratégico</td><td>Complementa otro sistema en momentos puntuales</td><td>Costo marginal y oportunidad</td></tr>
+        </table>
+        <p>No comparar sin separar negocios: en hotelería, buena parte del riesgo de precio de la hacienda queda en el propietario del animal, no en el feedlot.</p>
+      `,
+      datos: `
+        <h3 class="sec">Los KPI que definen el negocio</h3>
+        <p style="font-family:var(--font-mono); font-size:14.5px;">Plazas × Ocupación × Rotación = Flujo anual aproximado</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">6,5</div><div class="stat-lbl">kg de alimento / kg ganado (conversión, ejemplo didáctico)</div></div>
+          <div class="stat-card"><div class="stat-num o">1,25 kg/d</div><div class="stat-lbl">ADPV, ejemplo de terminación intensiva (100 días, 300→425 kg)</div></div>
+        </div>
+        <h3 class="sec">Por qué la conversión importa tanto</h3>
+        <p>Si una mejora reduce la conversión de 7 a 6 kg de alimento por kg ganado, cada 100 kg producidos ahorran 100 kg de alimento por cabeza. En 5.000 cabezas, la diferencia equivale a <strong>500 toneladas de alimento</strong>.</p>
+        <h3 class="sec">Escala: el modelo oficial 2026</h3>
+        <p>El modelo de Resultados Económicos Ganaderos (junio 2026) usa <strong>2,3 ciclos anuales</strong> como referencia de escala, y advierte que reducir la intensidad por debajo de ~1,75 ciclos llevaría el resultado neto anual a terreno negativo, en ese modelo de costos.</p>
+      `,
+      manejo: `
+        <h3 class="sec">Riesgos que se concentran al intensificar</h3>
+        <ul class="list">
+          <li><strong>Estrés de ingreso:</strong> baja consumo y aumenta susceptibilidad sanitaria.</li>
+          <li><strong>Estrés calórico:</strong> reduce consumo y ganancia, aumenta demanda de agua.</li>
+          <li><strong>Barro / drenaje deficiente:</strong> afecta bienestar, consumo y eficiencia.</li>
+          <li><strong>Falla de agua:</strong> impacto inmediato y crítico.</li>
+        </ul>
+        <p>El feedlot reduce la dependencia del pasto, pero no elimina la biología: calor, lluvia, barro y agua siguen afectando consumo y conversión.</p>
+        <h3 class="sec">Preguntas para el productor</h3>
+        <ul class="list">
+          <li>¿El feedlot es propio, hotelería, integrado o estratégico?</li>
+          <li>¿Cuántas plazas tiene y cuál es la ocupación promedio?</li>
+          <li>¿Cuál es la ADPV real y la conversión?</li>
+          <li>¿Qué parte de la dieta produce y qué parte compra?</li>
+        </ul>
+        <div class="callout"><div class="callout-label">Riesgo dominante</div><p>Costo de la dieta + sanidad por concentración de animales + baja ocupación.</p></div>
+      `,
+      actualidad: `
+        <div class="chip-row"><span class="pill mix">MIXTA</span></div>
+        <p>El maíz muy barato relativo al novillo es uno de los motores del momento ganadero 2026 — pero no garantiza margen si la reposición entra cara o el gordo no convalida precio.</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">56</div><div class="stat-lbl">kg de novillo por tonelada de maíz (may-26)</div></div>
+          <div class="stat-card"><div class="stat-num o">102</div><div class="stat-lbl">Promedio de la serie histórica — el maíz está ~45% más barato que su promedio</div></div>
+        </div>
+        <p>La relación reposición/gordo sigue siendo desfavorable, y el precio de salida (novillo) perdió algo de terreno relativo hacia mayo. La ventaja alimentaria puede quedar absorbida por el costo del animal de entrada.</p>
+      `
+    }
+  },
+  {
+    id:"ciclo", name:"Ciclo completo", tag:"CC", color:COLORS.green,
+    short:"Integra cría, recría y terminación.",
+    gauge:{value:42, max:60, unit:"%", label:"Margen del ciclo completo sobre su promedio histórico (modelo Córdoba, 2026)", color:COLORS.green},
+    tabs:{
+      principios: `
+        <h3 class="sec">Qué es</h3>
+        <p>Una misma empresa integra dos o más etapas —normalmente cría, recría y terminación— y decide en cada momento si vende o sigue agregando valor. No significa necesariamente llevar todos los animales hasta faena: significa disponer de una estructura que permite capturar valor en varias etapas.</p>
+        <div class="chip-row"><span class="chip">Vientre</span><span class="chip">→</span><span class="chip">Ternero</span><span class="chip">→</span><span class="chip">Recría</span><span class="chip">→</span><span class="chip">Terminación</span><span class="chip">→</span><span class="chip">Venta</span></div>
+        <h3 class="sec">El ternero propio no es gratis</h3>
+        <p>Si la empresa produce su propio ternero y decide retenerlo, la Recría "recibe" un animal con un valor económico real, aunque no haya ocurrido una venta. Este <strong>precio interno de transferencia</strong> permite medir cada etapa como una unidad de negocio separada, sin confundir propiedad interna con costo cero.</p>
+        <h3 class="sec">Especialización vs. integración</h3>
+        <table class="data"><tr><th>Modelo</th><th>Ventaja</th><th>Riesgo</th></tr>
+          <tr><td>Especializado (un solo sistema)</td><td>Foco de recursos</td><td>Depende de un solo precio/relación</td></tr>
+          <tr><td>Ciclo completo</td><td>Más momentos de venta posibles</td><td>Complejidad, capital, oculta ineficiencias</td></tr>
+        </table>
+      `,
+      datos: `
+        <h3 class="sec">Margen por etapa y consolidado</h3>
+        <table class="data"><tr><th>Unidad</th><th>Ingreso</th><th>Pregunta de gestión</th></tr>
+          <tr><td>Cría</td><td>Valor de terneros transferidos/vendidos</td><td>¿Cuánto cuesta producir un ternero destetado?</td></tr>
+          <tr><td>Recría</td><td>Valor recriado − valor del ternero recibido</td><td>¿Cuánto cuesta fabricar cada kilo?</td></tr>
+          <tr><td>Terminación</td><td>Venta final − valor del animal recibido</td><td>¿Conviene producir los últimos kilos?</td></tr>
+          <tr><td>Consolidado</td><td>Ventas externas reales</td><td>¿Cuál es el margen total?</td></tr>
+        </table>
+        <div class="callout dark"><div class="callout-label">Regla</div><p>Un resultado consolidado positivo no demuestra que todas las etapas sean eficientes. Sin precios internos de transferencia, la empresa conoce el resultado total pero no sabe qué unidad financia a cuál.</p></div>
+        <h3 class="sec">Ejemplo de cátedra</h3>
+        <p>1.000 terneros de 180 kg. La empresa recría 700 hasta 350 kg. Al finalizar, decide terminar solo 400 (relación alimento/gordo desmejorada) y vende 300 como recriados. Antes de decidir cada paso hay que medir: valor de oportunidad del ternero, margen de recría obtenido, y costo marginal de los últimos kilos.</p>
+      `,
+      manejo: `
+        <h3 class="sec">La decisión permanente</h3>
+        <p style="font-family:var(--font-mono); font-size:14.5px;">Valor adicional esperado > Costo adicional + Tiempo + Riesgo</p>
+        <p>En cada punto de la cadena —destete, fin de recría, terminación— el productor compara transformar el animal en caja hoy, o inmovilizar capital para intentar capturar más valor mañana.</p>
+        <h3 class="sec">Preguntas para el productor</h3>
+        <ul class="list">
+          <li>¿Conocés el margen separado de Cría, Recría y Terminación?</li>
+          <li>¿Qué % de terneros vendés al destete y qué % retenés?</li>
+          <li>¿Qué etapa concentra más capital de trabajo y por cuánto tiempo?</li>
+          <li>¿Qué variable define hoy si vendés o retenés una categoría?</li>
+        </ul>
+        <div class="callout"><div class="callout-label">Riesgo dominante</div><p>Complejidad de gestión + capital inmovilizado en varias etapas a la vez + riesgo de que una etapa ineficiente quede tapada por otra que anda bien.</p></div>
+      `,
+      actualidad: `
+        <div class="chip-row"><span class="pill fav">FAVORABLE</span></div>
+        <p>La integración y la flexibilidad compensan la reposición cara: en un contexto de ternero caro y maíz barato relativo, el ciclo completo puede capturar valor si produce su reposición y dispone de alimento propio.</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">+42%</div><div class="stat-lbl">Margen de ciclo completo sobre su promedio histórico (modelo Córdoba, SAGyP)</div></div>
+        </div>
+        <p>Igual que en cría, el margen viene descendiendo desde el máximo de noviembre 2025. Necesita medir precios internos de transferencia para no ocultar pérdidas entre etapas.</p>
+      `
+    }
+  },
+  {
+    id:"tambo", name:"Tambo", tag:"TB", color:COLORS.orange,
+    short:"Cosecha litros, no kilos.",
+    gauge:{value:22, max:35, unit:"L/vaca/día", label:"Promedio nacional 2026 (tambos de gran escala: 30-35 L/día)", color:COLORS.orange},
+    tabs:{
+      principios: `
+        <h3 class="sec">Qué es</h3>
+        <p>El tambo es la misma fábrica biológica que la ganadería de carne —vientre, reproducción, alimentación, tiempo—, pero lo que cosecha no es un animal terminado sino un <strong>flujo diario de litros</strong> mientras la vaca permanece en producción.</p>
+        <div class="callout orange"><div class="callout-label">Diferencia clave</div><p>En carne, el animal <strong>ES</strong> el producto: se vende una vez, terminado. En tambo, el animal <strong>PRODUCE</strong> el producto: la vaca es capital de trabajo que se ordeña todos los días, y recién se vende (como categoría de carne, de descarte) cuando deja de ser eficiente.</p></div>
+        <h3 class="sec">El flujo del animal</h3>
+        <table class="data"><tr><th>Etapa</th><th>Qué ocurre</th></tr>
+          <tr><td>Ternera</td><td>Nace y se cría hasta el destete — igual que la cría de carne.</td></tr>
+          <tr><td>Recría de reposición</td><td>Se recría la vaquillona hasta peso/edad de servicio (~24 meses).</td></tr>
+          <tr><td>Vaca en producción</td><td>Parto → lactancia → ordeñe diario → secado → nuevo parto.</td></tr>
+          <tr><td>Vaca de descarte</td><td>Al perder eficiencia, se vende como categoría de carne.</td></tr>
+        </table>
+      `,
+      datos: `
+        <h3 class="sec">Objetivos del manejo reproductivo (cátedra)</h3>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">24 m</div><div class="stat-lbl">Edad al 1er parto</div></div>
+          <div class="stat-card"><div class="stat-num o">12 m</div><div class="stat-lbl">Intervalo entre partos (IEP)</div></div>
+          <div class="stat-card"><div class="stat-num">≥4</div><div class="stat-lbl">Lactancias en vida útil</div></div>
+        </div>
+        <h3 class="sec">Índices productivos, con valores de referencia real</h3>
+        <table class="data"><tr><th>Índice</th><th>Regional*</th><th>Tambo FCA-UNR</th></tr>
+          <tr><td>Litros / ha VT ajustada / año</td><td class="num">9.183</td><td class="num">10.432</td></tr>
+          <tr><td>kg Sólidos Útiles / ha VT aj. / año</td><td class="num">642</td><td class="num">678</td></tr>
+          <tr><td>Producción individual (L/VT/día)</td><td class="num">20,4</td><td class="num">19,18</td></tr>
+          <tr><td>kg equivalente grano / litro</td><td class="num">0,288</td><td class="num">0,340</td></tr>
+        </table>
+        <h3 class="sec">Metodología de equivalente grano</h3>
+        <p>Todos los alimentos se expresan en una única unidad tomando como referencia la concentración energética del maíz (3,3 Mcal EM/kgMS). Ejemplo: 1 kg MS de heno (2,1 Mcal EM/kgMS) equivale a <strong>0,64 kg Eq.Gr</strong>. Esto permite ajustar la superficie del tambo por el nivel real de suplementación, más allá del área física.</p>
+      `,
+      manejo: `
+        <h3 class="sec">Capital y estructura</h3>
+        <p>El tambo tiene instalaciones fijas mucho mayores que la cría o la recría a campo: sala de ordeñe o robots, corral de espera, mixer, manga de manejo. Esa estructura exige diluir costos con escala y ocupación — de forma parecida a cómo un feedlot necesita ocupación y rotación para justificar sus plazas.</p>
+        <h3 class="sec">El calendario de partos</h3>
+        <p>La mayoría de los tambos comerciales argentinos mantiene servicio y parición prácticamente continuos, para sostener una entrega pareja de leche. Aun así, en los sistemas más pastoriles se aplica la misma lógica que en cría: que el pico de lactancia no caiga justo en el momento de menor oferta de pasto (pleno invierno).</p>
+        <h3 class="sec">Preguntas para el productor</h3>
+        <ul class="list">
+          <li>¿Cuántas vacas tenés en ordeñe y cuál es tu relación VO/VT?</li>
+          <li>¿Cuántos litros/VO/día y litros/ha estás logrando?</li>
+          <li>¿Cuál es tu intervalo entre partos?</li>
+          <li>¿Qué sistema de ordeñe usás (sala, calesita, robot)?</li>
+        </ul>
+        <div class="callout orange"><div class="callout-label">Dónde conecta con maquinaria</div><p>Mixer/carro forrajero, tractores para reparto de alimento y manejo de efluentes, equipos de forraje, y en tambos de escala, automatización de ordeñe. El cuello de botella suele estar en mezclar y repartir alimento todos los días, no solo en la sala de ordeñe.</p></div>
+      `,
+      actualidad: `
+        <div class="chip-row"><span class="pill dem">AJUSTADA</span></div>
+        <p>Buen momento productivo, pero con rentabilidad más apretada que la ganadería de carne en el mismo momento.</p>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">22 L</div><div class="stat-lbl">Promedio nacional/vaca/día — escala grande: 30-35 L/día</div></div>
+          <div class="stat-card"><div class="stat-num o">70%</div><div class="stat-lbl">Gastos directos sobre el ingreso total (Encuesta INTA 2024-25)</div></div>
+          <div class="stat-card"><div class="stat-num">6.289 L</div><div class="stat-lbl">Producción promedio/vaca/año (INTA), 3,78% grasa, 3,40% proteína</div></div>
+        </div>
+        <p>El sector muestra concentración: cada vez menos tambos (por debajo de 9.000 activos), pero de mayor escala y con más tecnología (mixers, salas rotativas, robots de ordeñe).</p>
+      `
+    }
+  }
+];
+
+const PANORAMA_HTML = `
+  <h3 class="sec">Por qué se habla de un buen momento ganadero</h3>
+  <p>La mejora no tiene una causa única: surge de la coincidencia de <strong>hacienda cara + oferta ajustada + demanda externa firme + maíz barato relativo</strong>. Una combinación que favorece al sector, pero con efectos distintos según la etapa.</p>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num">+64,3%</div><div class="stat-lbl">Ternero 160-180 kg, interanual (may-26)</div></div>
+    <div class="stat-card"><div class="stat-num o">+50,7%</div><div class="stat-lbl">Novillo, interanual (may-26)</div></div>
+    <div class="stat-card"><div class="stat-num">+46%</div><div class="stat-lbl">Valor exportado de carne, ene-may 26 vs. ene-may 25</div></div>
+    <div class="stat-card"><div class="stat-num o">+151%</div><div class="stat-lbl">Volumen exportado a EE.UU., ene-may 26 vs. ene-may 25</div></div>
+  </div>
+
+  <h3 class="sec">Semáforo por sistema</h3>
+  <table class="data"><tr><th>Sistema</th><th>Situación</th><th>Por qué</th></tr>
+    <tr><td>Cría</td><td><span class="pill fav">Favorable</span></td><td>Ternero valorizado; margen histórico alto.</td></tr>
+    <tr><td>Recría</td><td><span class="pill mix">Mixta</span></td><td>Kilos pastoriles competitivos, pero ternero caro.</td></tr>
+    <tr><td>Invernada</td><td><span class="pill dem">Exigente</span></td><td>Relación ternero/novillo alta; margen bajo su promedio.</td></tr>
+    <tr><td>Feedlot</td><td><span class="pill mix">Mixta</span></td><td>Maíz muy favorable, pero brecha reposición/gordo.</td></tr>
+    <tr><td>Ciclo completo</td><td><span class="pill fav">Favorable</span></td><td>Integración y flexibilidad compensan la reposición cara.</td></tr>
+    <tr><td>Tambo</td><td><span class="pill dem">Ajustada</span></td><td>Gastos directos ≈70% del ingreso; rentabilidad apretada.</td></tr>
+  </table>
+
+  <h3 class="sec">Lo que beneficia / lo que perjudica</h3>
+  <div class="twocol">
+    <div class="col-card good">
+      <div class="col-title">Lo beneficia</div>
+      <ul>
+        <li>Precios de hacienda elevados y oferta restringida (stock -700 mil cabezas en 2025).</li>
+        <li>Demanda externa firme: exportaciones +46% en valor; EE.UU. +151% en volumen.</li>
+        <li>Relación maíz/novillo muy favorable: 56 vs. promedio 102 kg novillo/tonelada.</li>
+        <li>Poder de compra de insumos y maquinaria ~35% mejor que el promedio de 5 años.</li>
+        <li>Márgenes de cría (+37%) y ciclo completo (+42%) sobre su promedio histórico.</li>
+      </ul>
+    </div>
+    <div class="col-card bad">
+      <div class="col-title">Lo perjudica</div>
+      <ul>
+        <li>Relación ternero/novillo alta (1,45): reposición cara para quien compra.</li>
+        <li>Invernada con margen 4% por debajo de su promedio histórico.</li>
+        <li>Stock ganadero bajo: limita la capacidad de crecer en el corto plazo.</li>
+        <li>Los márgenes de cría y ciclo completo vienen bajando desde el pico de nov-25.</li>
+        <li>Ventajas coyunturales (maíz, poder de compra) que pueden revertirse.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="sec">Relaciones insumo-producto (poder de compra)</h3>
+  <p>La pregunta relevante no es cuánto vale la hacienda en pesos, sino <strong>cuántos kilos hay que entregar para comprar cada insumo o inversión</strong>. Si la relación baja, el poder de compra mejora.</p>
+  <table class="data"><tr><th>Relación</th><th>Qué mide</th><th>Situación 2026</th></tr>
+    <tr><td>Ternero / novillo</td><td>Costo de reposición del invernador</td><td>Desfavorable: 1,45, por encima del promedio</td></tr>
+    <tr><td>Maíz / novillo</td><td>Costo relativo del alimento energético</td><td>Muy favorable: 56 vs. promedio 102</td></tr>
+    <tr><td>Hacienda / maquinaria</td><td>Capacidad de adquirir bienes de capital</td><td>Mejora frente al promedio de 5 años (CONINAGRO)</td></tr>
+    <tr><td>Hacienda / salario</td><td>Costo laboral en producto</td><td>Poder de compra de la hacienda mejoró</td></tr>
+  </table>
+
+  <h3 class="sec">Perspectivas 12-24 meses</h3>
+  <table class="data"><tr><th>Escenario</th><th>Qué ocurre</th><th>Ganadores relativos</th></tr>
+    <tr><td>A · Continuidad favorable</td><td>Exportación firme, stock ajustado, maíz competitivo</td><td>Cría, integrados, engordes eficientes</td></tr>
+    <tr><td>B · Reconstrucción de stock</td><td>Retención de hembras, menor oferta temporal</td><td>Cría y productores con vientres</td></tr>
+    <tr><td>C · Compresión de márgenes</td><td>Sube maíz/insumos o cae el gordo/exportación</td><td>Sistemas de bajo costo y alta eficiencia</td></tr>
+  </table>
+  <div class="callout dark">
+    <div class="callout-label">Conclusión de perspectiva</div>
+    <p>El principal riesgo es confundir coyuntura con estructura: suponer que todas las relaciones de 2026 son permanentes. La inversión más defensiva es la que mejora productividad y reduce costo por kilo (o por litro) incluso si cambian los precios relativos.</p>
+  </div>
+  <div class="footer-src">Fuente: Módulo interno de Economía y Mercado Ganadero (2026), sobre datos de SAGyP (Principales Indicadores del Sector Bovino, may-26; Resultados Económicos Ganaderos N°58, jun-26), CONINAGRO y BCR/Rosgan. Cifras de un momento puntual — validar y actualizar antes de una conversación comercial.</div>
+`;
+
+const COMUN_HTML = `
+  <h3 class="sec">El mismo motor, dos cosechas distintas</h3>
+  <p style="font-family:var(--font-mono); font-size:15px;">VIENTRE / ANIMAL EN PRODUCCIÓN + ALIMENTO + TIEMPO + GESTIÓN → PRODUCTO</p>
+  <p>Lo único que cambia entre sistemas es <strong>qué se cosecha</strong> (kilos de crecimiento, un animal terminado, o litros de leche) y <strong>cuándo se cobra</strong> ese trabajo biológico: una venta puntual del animal en los sistemas de carne, o un flujo diario de litros en tambo mientras el animal permanece en el sistema.</p>
+
+  <h3 class="sec">Recursos alimenticios — los mismos en todos los sistemas</h3>
+  <table class="data"><tr><th>Recurso</th><th>Uso típico</th></tr>
+    <tr><td>Campo natural / pastizal</td><td>Base de planteos extensivos: cría, recría, tambos pastoriles.</td></tr>
+    <tr><td>Pastura implantada</td><td>Aumentar cantidad, calidad o estabilidad de la oferta.</td></tr>
+    <tr><td>Verdeo</td><td>Cubrir baches de oferta o elevar la ganancia/producción.</td></tr>
+    <tr><td>Heno / rollo</td><td>Reserva para períodos de escasez.</td></tr>
+    <tr><td>Silaje</td><td>Reserva de alto volumen en sistemas intensificados.</td></tr>
+    <tr><td>Suplemento / dieta formulada</td><td>Corregir déficits o sostener alta producción (feedlot, tambos de escala).</td></tr>
+  </table>
+
+  <h3 class="sec">Balance forrajero: el calendario también importa</h3>
+  <p>La oferta de pasto no es pareja durante el año: en pasturas templadas crece fuerte en primavera, baja en pleno verano, se recupera algo en otoño y cae a su mínimo en invierno. El requerimiento del animal tampoco es parejo: sube fuerte al arrancar la lactancia y baja en los períodos secos o de gestación media. <strong>Planificar es, en gran parte, hacer coincidir esas dos curvas</strong> — ver el detalle aplicado en la ficha de Cría.</p>
+
+  <h3 class="sec">Capital, tiempo y rotación</h3>
+  <p>En todos los sistemas, el animal inmoviliza capital mientras permanece en el sistema. En cría, recría, invernada y feedlot ese capital se realiza cuando se vende el animal. En tambo, la vaca es capital de trabajo permanente: no se vende para "cobrar" el resultado, se ordeña — el capital se realiza recién cuando pasa a descarte.</p>
+
+  <h3 class="sec">La decisión marginal</h3>
+  <p style="font-family:var(--font-mono); font-size:14.5px;">Valor adicional esperado > Costo adicional + Tiempo + Riesgo</p>
+  <p>La misma pregunta aplicada a distintos momentos: ¿sigo agregando kilos o vendo ahora? ¿retengo el ternero o lo vendo al destete? ¿sigo ordeñando esta vaca o la mando a descarte?</p>
+
+  <h3 class="sec">Rentabilidad, liquidez, patrimonio y poder de compra</h3>
+  <table class="data"><tr><th>Dimensión</th><th>Pregunta</th></tr>
+    <tr><td>Rentabilidad</td><td>¿El sistema genera resultado económico?</td></tr>
+    <tr><td>Liquidez</td><td>¿Hay caja disponible hoy?</td></tr>
+    <tr><td>Patrimonio</td><td>¿Qué respaldo tiene la empresa?</td></tr>
+    <tr><td>Poder de compra</td><td>¿Cuánto tiene que vender para adquirir un activo?</td></tr>
+  </table>
+  <div class="callout dark">
+    <div class="callout-label">Para el gerente de sucursal</div>
+    <p>Pasar de "¿necesitás un tractor?" a entender qué sistema tiene el cliente, qué cuello de botella productivo enfrenta hoy, y qué retorno debería darle una inversión para que tenga sentido en su negocio.</p>
+  </div>
+`;
+
+const COMERCIALIZACION_HTML = `
+  <h3 class="sec">Del establecimiento a la mesa</h3>
+  <div class="chip-row">
+    <span class="chip">Productor</span><span class="chip">→</span>
+    <span class="chip">Canal de venta</span><span class="chip">→</span>
+    <span class="chip">Frigorífico / industria</span><span class="chip">→</span>
+    <span class="chip">Mercado interno o exportación</span>
+  </div>
+  <p>Entre el productor y el frigorífico casi siempre hay un canal de venta específico — y ese canal define no solo el precio, sino también <strong>cuándo cobra</strong> el productor y qué tan comparable es ese precio con la referencia nacional.</p>
+
+  <h3 class="sec">Canales de venta de hacienda</h3>
+  <table class="data"><tr><th>Canal</th><th>Cómo funciona</th><th>Particularidad</th></tr>
+    <tr><td>Venta directa</td><td>El productor negocia directamente con el frigorífico, el invernador o el feedlot, sin intermediario.</td><td>Es el canal más usado: cerca del 60% del volumen se comercializa sin intermediarios (CNDC).</td></tr>
+    <tr><td>Consignatario / martillero</td><td>Un intermediario matriculado vende la hacienda en nombre del productor, a cambio de una comisión.</td><td>Puede vender por remate o gestionar una venta directa; también puede tramitar la documentación de traslado.</td></tr>
+    <tr><td>Mercado concentrador</td><td>La hacienda se traslada físicamente a un mercado donde se remata todos los días.</td><td>El Mercado de Liniers es el más grande e histórico de Argentina — remata de lunes a viernes.</td></tr>
+    <tr><td>Remate feria</td><td>Remate presencial organizado en el campo o en un predio ferial local.</td><td>Evita el traslado hasta un mercado concentrador; muy usado en el interior.</td></tr>
+    <tr><td>Venta por pantalla</td><td>Remate electrónico: se ofrece y se compra hacienda sin moverla del campo hasta después de cerrada la venta.</td><td>ROSGAN (Bolsa de Comercio de Rosario) y el propio Mercado de Liniers son los principales impulsores.</td></tr>
+  </table>
+
+  <h3 class="sec">Actores de la cadena</h3>
+  <table class="data"><tr><th>Actor</th><th>Rol</th></tr>
+    <tr><td>Consignatario / martillero</td><td>Intermediario matriculado; cobra comisión por vender o gestionar la venta.</td></tr>
+    <tr><td>Frigorífico / matarife-abastecedor</td><td>Faena el animal y lo transforma en carne — para consumo interno, exportación, o ambos.</td></tr>
+    <tr><td>Exportador</td><td>Coloca la carne (o el animal en pie, en menor medida) en mercados internacionales.</td></tr>
+    <tr><td>Carnicero / distribuidor / supermercado</td><td>Última etapa antes del consumidor; explica buena parte de la dispersión de precios minoristas.</td></tr>
+    <tr><td>SENASA</td><td>Controla la sanidad y la trazabilidad de cada movimiento de hacienda.</td></tr>
+  </table>
+
+  <h3 class="sec">Documentación y trazabilidad</h3>
+  <ul class="list">
+    <li><strong>DTe (Documento de Tránsito Electrónico):</strong> se tramita online en el sistema SIGSA de SENASA; es obligatorio para mover hacienda, y su autogestión es obligatoria para consignatarios y establecimientos de engorde a corral.</li>
+    <li><strong>RENSPA:</strong> Registro Nacional Sanitario de Productores Agropecuarios — es la identificación del establecimiento, requisito para poder emitir el DTe.</li>
+    <li><strong>Guía Ganadera provincial:</strong> complementa al DTe; varias provincias ya lo unificaron en un <strong>Documento Único de Tránsito (DUT)</strong> para evitar duplicar trámites.</li>
+    <li><strong>RUCA:</strong> Registro Único de Operadores de la Cadena Agroindustrial — todos los actores de la cadena (consignatarios, frigoríficos, exportadores) deben estar inscriptos.</li>
+  </ul>
+
+  <div class="callout dark">
+    <div class="callout-label">El Mercado de Liniers como termómetro</div>
+    <p>Aunque hoy gran parte del volumen se vende directo o por pantalla, los precios que se difunden a diario desde Liniers siguen siendo la <strong>referencia nacional</strong>: son los valores que después se usan para comparar categorías, construir los índices de SAGyP y armar los modelos económicos que vimos en Panorama 2026.</p>
+  </div>
+
+  <h3 class="sec">Cómo funciona un remate, paso a paso</h3>
+  <p>El remate es el mecanismo detrás de tres de los cinco canales de venta (mercado concentrador, remate feria y venta por pantalla). No todos funcionan igual.</p>
+  <table class="data"><tr><th>Tipo de remate</th><th>Cómo es</th><th>Ejemplo</th></tr>
+    <tr><td>En mercado concentrador</td><td>La hacienda viaja físicamente hasta el mercado; remata todos los días.</td><td>Liniers (Bs. As.), Ferreyra (Córdoba)</td></tr>
+    <tr><td>Remate feria</td><td>Itinerante, en un predio local o directamente en el campo del productor.</td><td>Ferias del interior</td></tr>
+    <tr><td>Por pantalla</td><td>La hacienda queda en el campo; se vende online y recién viaja después de vendida.</td><td>ROSGAN, Liniers online, casas consignatarias</td></tr>
+    <tr><td>De exposición</td><td>Animales de pedigrí o reproductores, no hacienda para faena.</td><td>Exposiciones de razas</td></tr>
+  </table>
+
+  <h4 class="sub">Remate presencial (feria o mercado concentrador)</h4>
+  <ol class="list">
+    <li><strong>Ingreso y control:</strong> se verifica cantidad, categoría y documentación (DTe/guía) de la tropa.</li>
+    <li><strong>Desbaste:</strong> el animal llega y durante la noche pierde peso (líquidos, contenido digestivo) por el ayuno del viaje. El peso que cuenta para la venta es el del día siguiente, ya "desbastado" — es plata que el productor pierde en el traslado, no en la venta en sí.</li>
+    <li><strong>Loteo:</strong> se clasifica la tropa en corrales por categoría, clase y estado, y se anota en el libro del mercado: vendedor, corral, condiciones de venta.</li>
+    <li><strong>Subasta:</strong> el rematador recibe la "tropa en la pista" y remata a viva voz; compradores (frigoríficos, invernadores, feedlots, otros consignatarios comprando para terceros) pujan y se adjudica al mejor postor.</li>
+  </ol>
+
+  <h4 class="sub">Remate por pantalla</h4>
+  <ol class="list">
+    <li>Cada lote se publica con antelación (fotos, video, peso promedio, categoría, ubicación) — en Liniers, por ejemplo, los consignatarios suben el catálogo unas 72 horas antes.</li>
+    <li>Al arrancar cada lote, el rematador informa los términos: precio base, plazo de pago, quién paga el flete.</li>
+    <li>Los compradores pujan en tiempo real desde una pantalla; se cierra al mejor postor.</li>
+    <li>Recién ahí se organiza el traslado — directo del campo al comprador, sin pasar por el mercado.</li>
+  </ol>
+  <div class="callout orange">
+    <div class="callout-label">La ventaja concreta de vender por pantalla</div>
+    <p>Al pesarse en origen, se evita el desbaste del viaje especulativo hasta el mercado, y se ahorra un flete (el que antes iba "a ver si se vendía"). Menos manipuleo también significa menos estrés y riesgo sanitario para el animal.</p>
+  </div>
+
+  <h4 class="sub">Cuánto cuesta vender por remate</h4>
+  <p>Sobre el valor de la operación se suman: comisión del consignatario, garantía de pago (si el consignatario la ofrece), gastos del mercado (derecho de piso, seguro) si es concentrador, impuestos (IIBB, Ganancias), y costos fijos por cabeza (guía/DTe, flete). Un estudio universitario (UNS) que comparó vías de comercialización encontró que vender por Liniers implicaba cerca del <strong>14% del valor de venta en costos totales</strong> — de los cuales las comisiones eran ~40% de esos costos y el flete ~37% (por la distancia al mercado). La venta directa y la venta por pantalla suelen salir más baratas, principalmente porque se ahorran ese flete.</p>
+
+  <h4 class="sub">Cuándo cobra el productor</h4>
+  <p>El consignatario emite una <strong>liquidación de venta</strong> (romaneo): peso, precio, descuentos, comisión, y el neto a cobrar. El plazo de pago depende de si el consignatario ofrece "garantía de pago" (cobra más rápido, con menos riesgo) o no. Vender por remate casi siempre implica esperar esa liquidación, a diferencia de una venta directa donde el plazo se negocia directamente con el comprador.</p>
+
+  <h3 class="sec">La cadena láctea es distinta</h3>
+  <p>En tambo no hay remate ni consignatario: la leche sale del tambo <strong>todos los días</strong> en camión cisterna y va directo a la planta industrializadora, casi siempre bajo un contrato o una relación estable con una industria o cooperativa. El precio no se define en un mercado concentrador — se negocia según composición (grasa, proteína, células somáticas) y condiciones comerciales pactadas, y suele liquidarse mensualmente.</p>
+
+  <h3 class="sec">Por qué le importa al gerente de sucursal</h3>
+  <p>El canal de venta no es un detalle administrativo: define el <strong>momento de cobro</strong> del cliente. Una venta directa puede cobrarse en pocos días; una consignación o un remate feria puede demorar más; el tambo cobra mensualmente contra la industria. Antes de hablar de una inversión, vale la pena entender por dónde vende el cliente y cuándo entra esa plata — no solo cuánto vale su hacienda o su leche.</p>
+
+  <div class="footer-src">Fuentes: Comisión Nacional de Defensa de la Competencia (CNDC), Resumen del Mercado Argentino de la Carne Vacuna; Mercado de Liniers S.A.; SENASA (sistema SIGSA, DT-e, RENSPA); AFIP/ARCA (RUCA); Diez, M. — Circuitos de comercialización de hacienda vacuna, Universidad Nacional del Sur (comparación de costos por canal); Filadd/UES21, Resumen Historia Remate de Hacienda. Estructura general del canal — los porcentajes de costos son de estudios puntuales y varían según consignataria, distancia y momento; verificar valores vigentes antes de una gestión concreta.</div>
+`;
+
+const TAB_LABELS = { principios:"Principios generales", datos:"Datos productivos", manejo:"Manejo y decisiones", actualidad:"Actualidad 2026" };
+const TAB_ORDER = ["principios","datos","manejo","actualidad"];
+
+const NAV_ITEMS = [
+  {id:"inicio", name:"Inicio", tag:"•", color:"#4A544B"},
+  ...SYSTEMS.map(s => ({id:s.id, name:s.name, tag:s.tag, color:s.color})),
+  {id:"comun", name:"Lo común a todos", tag:"=", color:"#4A544B"},
+  {id:"comercializacion", name:"Cadena de comercialización", tag:"$", color:"#4A544B"},
+  {id:"panorama", name:"Panorama 2026", tag:"%", color:COLORS.orange},
+];
+
+let state = { nav:"inicio", tab:"principios" };
+
+function getSystem(id){ return SYSTEMS.find(s => s.id === id); }
+
+function renderNav(){
+  const el = document.getElementById("navList");
+  el.innerHTML = "";
+  const label1 = document.createElement("li"); label1.className="nav-group-label"; label1.textContent="Guía"; el.appendChild(label1);
+  addNavItem(el, NAV_ITEMS[0]);
+  const label2 = document.createElement("li"); label2.className="nav-group-label"; label2.textContent="Sistemas productivos"; el.appendChild(label2);
+  NAV_ITEMS.slice(1,7).forEach(it => addNavItem(el, it));
+  const label3 = document.createElement("li"); label3.className="nav-group-label"; label3.textContent="Transversal"; el.appendChild(label3);
+  NAV_ITEMS.slice(7).forEach(it => addNavItem(el, it));
+}
+
+function addNavItem(el, it){
+  const li = document.createElement("li");
+  li.className = "nav-item" + (state.nav === it.id ? " active" : "");
+  li.innerHTML = `<span class="nav-dot" style="background:${it.color}">${it.tag}</span><span>${it.name}</span>`;
+  li.addEventListener("click", () => { state.nav = it.id; state.tab = "principios"; render(); closeMobileNav(); });
+  el.appendChild(li);
+}
+
+function render(){
+  renderNav();
+  const topbar = document.getElementById("topbar");
+  const eyebrow = document.getElementById("eyebrow");
+  const title = document.getElementById("pageTitle");
+  const desc = document.getElementById("pageDesc");
+  const tabbar = document.getElementById("tabbar");
+  const content = document.getElementById("content");
+
+  if(state.nav === "inicio"){
+    eyebrow.textContent = "Agronorte · Guía interna";
+    title.textContent = "Sistemas productivos ganaderos y tambo";
+    desc.textContent = "Elegí un sistema para profundizar: principios generales, datos productivos, manejo y decisiones, y actualidad 2026.";
+    tabbar.innerHTML = "";
+    content.innerHTML = renderHome();
+    wireHomeCards();
+    return;
+  }
+
+  if(state.nav === "comun"){
+    eyebrow.textContent = "Transversal";
+    title.textContent = "Lo común a todos";
+    desc.textContent = "Lo que se repite en cría, recría, invernada, feedlot, ciclo completo y tambo — una sola vez.";
+    tabbar.innerHTML = "";
+    content.innerHTML = COMUN_HTML;
+    return;
+  }
+
+  if(state.nav === "comercializacion"){
+    eyebrow.textContent = "Transversal";
+    title.textContent = "Cadena de comercialización";
+    desc.textContent = "Cómo llega la hacienda (o la leche) del campo al frigorífico o la industria — y por dónde pasa la plata.";
+    tabbar.innerHTML = "";
+    content.innerHTML = COMERCIALIZACION_HTML;
+    return;
+  }
+
+  if(state.nav === "panorama"){
+    eyebrow.textContent = "Transversal";
+    title.textContent = "Panorama económico 2026";
+    desc.textContent = "Argentina, mediados de 2026 — qué ayuda y qué complica al productor ganadero, sistema por sistema.";
+    tabbar.innerHTML = "";
+    content.innerHTML = PANORAMA_HTML;
+    return;
+  }
+
+  const sys = getSystem(state.nav);
+  eyebrow.textContent = "Sistema productivo";
+  title.textContent = sys.name;
+  desc.textContent = sys.short;
+  tabbar.innerHTML = TAB_ORDER.map(t =>
+    `<button class="tabbtn${state.tab===t?" active":""}" data-tab="${t}">${TAB_LABELS[t]}</button>`
+  ).join("");
+  Array.from(tabbar.querySelectorAll(".tabbtn")).forEach(btn=>{
+    btn.addEventListener("click", ()=>{ state.tab = btn.dataset.tab; render(); });
+  });
+
+  let gaugeHtml = "";
+  if(state.tab === "principios"){
+    gaugeHtml = gaugeBlock(sys.gauge.value, sys.gauge.max, sys.gauge.unit, sys.gauge.label, sys.gauge.color);
+  }
+  content.innerHTML = gaugeHtml + sys.tabs[state.tab];
+}
+
+function renderHome(){
+  const cards = SYSTEMS.map(s => `
+    <div class="sys-card" data-nav="${s.id}">
+      <span class="arrow">→</span>
+      <div class="tag" style="background:${s.color}">${s.tag}</div>
+      <h4>${s.name}</h4>
+      <p>${s.short}</p>
+    </div>
+  `).join("");
+  const extraCards = `
+    <div class="sys-card" data-nav="comun">
+      <span class="arrow">→</span>
+      <div class="tag" style="background:#4A544B">=</div>
+      <h4>Lo común a todos</h4>
+      <p>Capital, tiempo, decisión marginal y balance forrajero.</p>
+    </div>
+    <div class="sys-card" data-nav="comercializacion">
+      <span class="arrow">→</span>
+      <div class="tag" style="background:#4A544B">$</div>
+      <h4>Cadena de comercialización</h4>
+      <p>Canales de venta, actores, documentación y trazabilidad.</p>
+    </div>
+    <div class="sys-card" data-nav="panorama">
+      <span class="arrow">→</span>
+      <div class="tag" style="background:${COLORS.orange}">%</div>
+      <h4>Panorama 2026</h4>
+      <p>Qué beneficia y qué perjudica al productor hoy.</p>
+    </div>
+  `;
+  return `
+    <div class="home-hero">
+      <p class="lead">Toda la ganadería —de carne o de leche— arranca del mismo vientre. Esta guía separa cada sistema en cuatro capas: de qué se trata, qué números lo describen, cómo se maneja en la práctica, y cómo le está yendo hoy.</p>
+    </div>
+    <div class="grid6">${cards}${extraCards}</div>
+  `;
+}
+
+function wireHomeCards(){
+  document.querySelectorAll(".sys-card").forEach(card=>{
+    card.addEventListener("click", ()=>{ state.nav = card.dataset.nav; state.tab="principios"; render(); window.scrollTo(0,0); });
+  });
+}
+
+// mobile nav
+function closeMobileNav(){
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+}
+document.getElementById("burgerBtn").addEventListener("click", ()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+});
+document.getElementById("overlay").addEventListener("click", closeMobileNav);
+
+render();
+</script>
+</body>
+</html>
