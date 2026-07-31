@@ -54,13 +54,7 @@ body{font-family:var(--font-body); background:var(--paper); color:var(--text); -
   position:sticky; top:0; z-index:5;
 }
 .topbar-inner{max-width:980px;}
-.brand-row{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:10px;}
-.brand-pill{
-  display:inline-flex; align-items:center; background:#fff; border:1px solid rgba(22,101,52,.14);
-  border-radius:12px; padding:7px 11px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
-}
-.brand-logo{display:block; height:26px; width:auto;}
+.back-row{display:flex; justify-content:flex-end; margin-bottom:10px;}
 .back-link{
   display:inline-flex; align-items:center; justify-content:center; gap:6px;
   background:var(--green); color:#fff; text-decoration:none; border-radius:9px;
@@ -191,10 +185,7 @@ table.data td.num{font-family:var(--font-mono); font-weight:700;}
   <main class="main">
     <div class="topbar" id="topbar">
       <div class="topbar-inner">
-        <div class="brand-row">
-          <div class="brand-pill"><img class="brand-logo" src="agronorte-logo.png" alt="Agronorte"></div>
-          <a class="back-link" href="index.html">← Volver al calendario</a>
-        </div>
+        <div class="back-row"><a class="back-link" href="index.html">← Volver al calendario</a></div>
         <div class="eyebrow" id="eyebrow">Agronorte</div>
         <div class="page-title" id="pageTitle">Inicio</div>
         <div class="page-desc" id="pageDesc"></div>
