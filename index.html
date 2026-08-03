@@ -46,19 +46,21 @@ if (!window.React || !window.ReactDOM || !window.Babel) {
 const GRUPO_COLOR = {
   "e-Brangus": "#C2410C", "AFA":"#0E7490", "Pastore":"#7C3AED",
   "Charles":"#BE185D", "Lehmann":"#15803D", "Rosgan":"#B45309",
-  "Exposiciones":"#1D4ED8",
+  "Exposiciones":"#1D4ED8", "La Ganadera":"#166534", "Tres Colonias":"#92400E",
 };
 const SOURCE_URLS = [
   ["e-brangus.com", "https://e-brangus.com/"],
   ["cooperativalehmann.coop", "https://www.cooperativalehmann.coop/"],
   ["consignatarias.com.ar", "https://www.consignatarias.com.ar/"],
+  ["laganadera.com.ar", "https://laganadera.com.ar/remates"],
+  ["instagram.com/trescolonias.sa", "https://www.instagram.com/trescolonias.sa/"],
   ["rosgan.com.ar", "https://www.rosgan.com.ar/"],
   ["todolecheria.com.ar", "https://www.todolecheria.com.ar/"],
   ["exporural.com.ar", "https://www.exporural.com.ar/"],
   ["farer", "https://farer.org.ar/"]
 ];
 const PROV_LIST = ["Santa Fe","Entre Ríos","Córdoba","Corrientes","Misiones"];
-const GRUPOS = ["e-Brangus","AFA","Pastore","Charles","Lehmann","Rosgan","Exposiciones"];
+const GRUPOS = ["e-Brangus","AFA","Pastore","Charles","Lehmann","Rosgan","La Ganadera","Tres Colonias","Exposiciones"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
 const SUCURSALES = ["AVELLANEDA","CAÑADA DE GOMEZ","CARLOS PELLEGRINI","CERES","CHAJARI","CONCORDIA","LA PAZ","MERCEDES","MORTEROS","OBERA","PARANA","SAN JUSTO","TOTORAS","VICTORIA"];
@@ -147,7 +149,7 @@ function App(){
   const [REMATES,setRemates]=useState(null);
   const [loadErr,setLoadErr]=useState(null);
   const [vista,setVista]=useState("calendario");
-  const [mesIdx,setMesIdx]=useState(6);
+  const [mesIdx,setMesIdx]=useState(new Date().getMonth());
   const [fGrupos,setFGrupos]=useState(new Set(GRUPOS));
   const [fProvs,setFProvs]=useState(new Set(PROV_LIST));
   const [fTipos,setFTipos]=useState(new Set());
