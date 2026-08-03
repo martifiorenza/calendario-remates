@@ -14,6 +14,7 @@
       "cooperativalehmann.coop (PDF 2026)",
       "consignatarias.com.ar",
       "laganadera.com.ar",
+      "instagram.com/trescolonias.sa",
       "rosgan.com.ar",
       "todolecheria.com.ar",
       "FARER 2026",
@@ -313,6 +314,23 @@
       "modalidad": "Presencial + Streaming",
       "confianza": "confirmado",
       "fuente": "e-brangus.com"
+    },
+    {
+      "id": "tc-001",
+      "firma": "Cabaña Tres Colonias",
+      "grupo": "Tres Colonias",
+      "cabana": "Gran remate anual de Tres Colonias",
+      "fecha": "2026-08-13",
+      "hora": "10:00",
+      "loc": "Villa Elisa",
+      "prov": "Entre Ríos",
+      "lat": -32.16,
+      "lng": -58.4,
+      "tipo": "Reproductores",
+      "modalidad": "Presencial + Virtual (Predio Tres Colonias, Ruta 130 km 19)",
+      "confianza": "confirmado",
+      "fuente": "instagram.com/trescolonias.sa",
+      "sourceUrl": "https://www.instagram.com/reel/Dbipl9FAdNU/"
     },
     {
       "id": "eb-016",
