@@ -1,13 +1,16 @@
 {
   "meta": {
     "titulo": "Remates ganaderos y exposiciones 2026",
-    "generado": "2026-07-27",
+    "generado": "2026-08-06",
     "provincias": [
+      "Buenos Aires",
+      "Chaco",
       "Santa Fe",
       "Entre Ríos",
       "Córdoba",
       "Corrientes",
-      "Misiones"
+      "Misiones",
+      "Formosa"
     ],
     "fuentes": [
       "e-brangus.com",
@@ -18,11 +21,46 @@
       "rosgan.com.ar",
       "todolecheria.com.ar",
       "FARER 2026",
-      "exporural.com.ar"
+      "exporural.com.ar",
+      "bellamar.com.ar"
     ],
-    "nota": "confianza: 'confirmado' = fecha publicada por la fuente | 'estimado' = proyección de recurrencia (verificar antes de asistir)"
+    "nota": "confianza: 'confirmado' = fecha publicada por la fuente | 'estimado' = proyección de recurrencia o fecha publicada a confirmar (verificar antes de asistir)"
   },
   "remates": [
+    {
+      "id": "bell-001",
+      "firma": "Bellamar Estancias / Iván L. O'Farrell SRL",
+      "grupo": "Bellamar",
+      "cabana": "27º Corral de Guardia (85 toros, 110 vientres)",
+      "fecha": "2026-07-13",
+      "hora": "",
+      "loc": "Resistencia",
+      "prov": "Chaco",
+      "lat": -27.45,
+      "lng": -58.99,
+      "tipo": "Reproductores",
+      "modalidad": "Presencial + Pre Oferta",
+      "confianza": "confirmado",
+      "fuente": "bellamar.com.ar",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
+    },
+    {
+      "id": "bell-002",
+      "firma": "Bellamar Estancias / Colombo y Magliano",
+      "grupo": "Bellamar",
+      "cabana": "43º Bellamar y El Bonete (120 toros, 70 vaquillonas)",
+      "fecha": "2026-08-05",
+      "hora": "",
+      "loc": "Chascomús",
+      "prov": "Buenos Aires",
+      "lat": -35.58,
+      "lng": -58.01,
+      "tipo": "Reproductores",
+      "modalidad": "Presencial + Pre Oferta",
+      "confianza": "confirmado",
+      "fuente": "bellamar.com.ar",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
+    },
     {
       "id": "eb-001",
       "firma": "e-Brangus / UMC Villaguay",
@@ -269,9 +307,9 @@
     },
     {
       "id": "eb-013",
-      "firma": "e-Brangus / Bellamar Estancias",
-      "grupo": "e-Brangus",
-      "cabana": "Corral de Guardia",
+      "firma": "Bellamar Estancias",
+      "grupo": "Bellamar",
+      "cabana": "49º Corral de Guardia (80 toros, 160 vientres)",
       "fecha": "2026-08-12",
       "hora": "",
       "loc": "Las Varillas",
@@ -279,9 +317,10 @@
       "lat": -31.87,
       "lng": -62.72,
       "tipo": "Reproductores",
-      "modalidad": "Presencial + Streaming",
+      "modalidad": "Comercialización directa + Pre Oferta",
       "confianza": "confirmado",
-      "fuente": "e-brangus.com"
+      "fuente": "bellamar.com.ar",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
     },
     {
       "id": "eb-014",
@@ -427,6 +466,23 @@
       "modalidad": "Presencial",
       "confianza": "confirmado",
       "fuente": "e-brangus.com"
+    },
+    {
+      "id": "bell-004",
+      "firma": "Bellamar Estancias",
+      "grupo": "Bellamar",
+      "cabana": "52º El Bonete y Bellamar (120 toros, 170 vientres)",
+      "fecha": "2026-08-26",
+      "hora": "",
+      "loc": "Miramar",
+      "prov": "Buenos Aires",
+      "lat": -38.27,
+      "lng": -57.84,
+      "tipo": "Reproductores",
+      "modalidad": "Comercialización directa + Pre Oferta",
+      "confianza": "confirmado",
+      "fuente": "bellamar.com.ar",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
     },
     {
       "id": "eb-019",
@@ -622,9 +678,9 @@
     },
     {
       "id": "eb-031",
-      "firma": "e-Brangus / Ferialvarez",
-      "grupo": "e-Brangus",
-      "cabana": "Corral de Guardia",
+      "firma": "Bellamar Estancias / Ferialvarez",
+      "grupo": "Bellamar",
+      "cabana": "10º El Bonete, Bellamar y Corral de Guardia (80 toros, 100 vientres)",
       "fecha": "2026-09-15",
       "hora": "",
       "loc": "Río Cuarto",
@@ -632,9 +688,10 @@
       "lat": -33.12,
       "lng": -64.35,
       "tipo": "Reproductores",
-      "modalidad": "Presencial + Streaming",
-      "confianza": "confirmado",
-      "fuente": "e-brangus.com"
+      "modalidad": "Presencial + Pre Oferta",
+      "confianza": "estimado",
+      "fuente": "bellamar.com.ar (fecha a confirmar)",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
     },
     {
       "id": "eb-032",
@@ -686,9 +743,9 @@
     },
     {
       "id": "eb-035",
-      "firma": "e-Brangus / Pepa, Knubel y Ferrero",
-      "grupo": "e-Brangus",
-      "cabana": "Corral de Guardia",
+      "firma": "Bellamar Estancias / Pepa, Knubel y Ferrero",
+      "grupo": "Bellamar",
+      "cabana": "25º Corral de Guardia, El Bonete y Bellamar (100 toros, 150 vientres)",
       "fecha": "2026-09-25",
       "hora": "",
       "loc": "San Cristóbal",
@@ -696,9 +753,10 @@
       "lat": -30.32,
       "lng": -61.23,
       "tipo": "Reproductores",
-      "modalidad": "Presencial + Streaming",
+      "modalidad": "Presencial + Pre Oferta",
       "confianza": "confirmado",
-      "fuente": "e-brangus.com"
+      "fuente": "bellamar.com.ar",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
     },
     {
       "id": "eb-036",
@@ -779,6 +837,23 @@
       "modalidad": "Presencial + Streaming",
       "confianza": "confirmado",
       "fuente": "e-brangus.com"
+    },
+    {
+      "id": "bell-007",
+      "firma": "Bellamar Estancias / Ganadera Dall'Osso e Hijo SRL",
+      "grupo": "Bellamar",
+      "cabana": "9º Corral de Guardia (50 toros, 120 vaquillonas)",
+      "fecha": "2026-10-08",
+      "hora": "",
+      "loc": "Formosa",
+      "prov": "Formosa",
+      "lat": -26.18,
+      "lng": -58.18,
+      "tipo": "Reproductores",
+      "modalidad": "Presencial + Pre Oferta",
+      "confianza": "confirmado",
+      "fuente": "bellamar.com.ar",
+      "sourceUrl": "https://www.bellamar.com.ar/remates.php"
     },
     {
       "id": "eb-041",
