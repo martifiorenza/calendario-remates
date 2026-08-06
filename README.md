@@ -1,6 +1,6 @@
 # Calendario de remates ganaderos 2026
 
-Calendario interactivo de remates ganaderos y exposiciones rurales en Buenos Aires, Chaco, Santa Fe, Entre Ríos, Córdoba, Corrientes, Misiones y Formosa. Vista de calendario, lista y mapa estático liviano, con filtros por firma, provincia y tipo de hacienda.
+Calendario interactivo de remates ganaderos y exposiciones rurales en Buenos Aires, Chaco, Santa Fe, Entre Ríos, Córdoba, Corrientes, Misiones, Formosa y Santiago del Estero. Vista de calendario, lista y mapa estático liviano, con filtros por firma, provincia y tipo de hacienda.
 
 ## Archivos
 
@@ -58,8 +58,8 @@ Editá `remates.json`. Cada evento es un objeto con esta forma:
 
 Reglas de los campos:
 
-- **`grupo`** debe ser uno de: `e-Brangus`, `Bellamar`, `AFA`, `Pastore`, `Charles`, `Lehmann`, `Rosgan`, `La Ganadera`, `Tres Colonias`, `Exposiciones`. Es lo que controla el color y el filtro de firma. (Si agregás un grupo nuevo, avisá para sumarle color.)
-- **`prov`** debe ser: `Buenos Aires`, `Chaco`, `Santa Fe`, `Entre Ríos`, `Córdoba`, `Corrientes`, `Misiones` o `Formosa`.
+- **`grupo`** debe ser uno de: `e-Brangus`, `Bellamar`, `Cabañas`, `AFA`, `Pastore`, `Charles`, `Lehmann`, `Rosgan`, `La Ganadera`, `Tres Colonias`, `Exposiciones`. Es lo que controla el color y el filtro de firma. (Si agregás un grupo nuevo, avisá para sumarle color.)
+- **`prov`** debe ser: `Buenos Aires`, `Chaco`, `Santa Fe`, `Entre Ríos`, `Córdoba`, `Corrientes`, `Misiones`, `Formosa` o `Santiago del Estero`.
 - **`fecha`** en formato `AAAA-MM-DD`.
 - **`confianza`**: `confirmado` (fecha publicada por la fuente) o `estimado` (proyección de recurrencia o fecha publicada a confirmar; se muestra atenuado y con la etiqueta “estimado”).
 - **`lat` / `lng`**: coordenadas de la localidad, para ubicarla aproximadamente en el mapa estático.
@@ -68,6 +68,6 @@ En GitHub podés editar `remates.json` directo desde el navegador (botón del l�
 
 ## Fuentes de los datos
 
-e-brangus.com · bellamar.com.ar · cooperativalehmann.coop (PDF calendario 2026) · consignatarias.com.ar · rosgan.com.ar · todolecheria.com.ar · FARER 2026 · exporural.com.ar
+e-brangus.com · braford.org.ar · angussantalucia.com.ar · angusdigital.com.ar · bellamar.com.ar · cooperativalehmann.coop (PDF calendario 2026) · consignatarias.com.ar · rosgan.com.ar · todolecheria.com.ar · FARER 2026 · exporural.com.ar
 
 Generado: 06/08/2026. Las fechas marcadas “estimado” provienen de recurrencias declaradas o están publicadas a confirmar, y deben validarse con la firma antes de asistir.
