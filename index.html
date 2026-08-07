@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Remates ganaderos 2026</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23367C2B'/%3E%3Cpath d='M18 18c-5 0-8 3-8 7 0 3 2 5 5 6-1 4 0 10 4 13 3 3 7 4 13 4s10-1 13-4c4-3 5-9 4-13 3-1 5-3 5-6 0-4-3-7-8-7-3 0-5 1-7 3-2-1-4-2-7-2s-5 1-7 2c-2-2-4-3-7-3z' fill='%23fff' stroke='%23FFDE00' stroke-width='3'/%3E%3Cpath d='M23 22c-3 0-6 2-6 6 0 2 1 4 3 5 2-3 5-6 9-8-1-2-3-3-6-3zM41 22c3 0 6 2 6 6 0 2-1 4-3 5-2-3-5-6-9-8 1-2 3-3 6-3z' fill='%23000'/%3E%3Ccircle cx='25' cy='34' r='3' fill='%23000'/%3E%3Ccircle cx='39' cy='34' r='3' fill='%23000'/%3E%3Cellipse cx='32' cy='43' rx='10' ry='7' fill='%23FFDE00'/%3E%3Ccircle cx='28' cy='43' r='1.7' fill='%23000'/%3E%3Ccircle cx='36' cy='43' r='1.7' fill='%23000'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23367C2B'/%3E%3Cpath d='M18 18c-5 0-8 3-8 7 0 3 2 5 5 6-1 4 0 10 4 13 3 3 7 4 13 4s10-1 13-4c4-3 5-9 4-13 3-1 5-3 5-6 0-4-3-7-8-7-3 0-5 1-7 3-2-1-4-2-7-2s-5 1-7 2c-2-2-4-3-7-3z' fill='%23fff' stroke='%23367C2B' stroke-width='3'/%3E%3Cpath d='M23 22c-3 0-6 2-6 6 0 2 1 4 3 5 2-3 5-6 9-8-1-2-3-3-6-3zM41 22c3 0 6 2 6 6 0 2-1 4-3 5-2-3-5-6-9-8 1-2 3-3 6-3z' fill='%23000'/%3E%3Ccircle cx='25' cy='34' r='3' fill='%23000'/%3E%3Ccircle cx='39' cy='34' r='3' fill='%23000'/%3E%3Cellipse cx='32' cy='43' rx='10' ry='7' fill='%23367C2B'/%3E%3Ccircle cx='28' cy='43' r='1.7' fill='%23000'/%3E%3Ccircle cx='36' cy='43' r='1.7' fill='%23000'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700;800&family=Titillium+Web:wght@600;700&display=swap" rel="stylesheet">
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -15,12 +15,12 @@
   #root{min-height:100vh;}
   button,input,select,textarea{font:inherit}
   h1,h2,h3{font-family:'Titillium Web',system-ui,sans-serif}
-  .evt:hover{background:#FFDE003d !important}
+  .evt:hover{background:#367C2B3d !important}
   .rowitem:hover{box-shadow:0 2px 10px #0001;transform:translateY(-1px);transition:all .12s}
   *{box-sizing:border-box}
   .loadwrap{display:flex;align-items:center;justify-content:center;height:100vh;
     font-family:'Host Grotesk',system-ui,sans-serif;color:#0009;font-size:15px;flex-direction:column;gap:14px}
-  .spin{width:34px;height:34px;border:3px solid #0001;border-top-color:#FFDE00;border-radius:50%;
+  .spin{width:34px;height:34px;border:3px solid #0001;border-top-color:#367C2B;border-radius:50%;
     animation:sp .8s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
   .errbox{max-width:520px;font-family:'Host Grotesk',system-ui,sans-serif;padding:24px;text-align:center;line-height:1.5}
@@ -511,7 +511,7 @@ function MapEventsPanel({group,setSel}){
 
 const S = {
   root:{fontFamily:"'Host Grotesk',system-ui,sans-serif",background:"#fff",color:"#000",minHeight:"100vh"},
-  header:{display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16,padding:"26px 28px 18px",borderBottom:"3px solid #FFDE00",background:"#fff",position:"sticky",top:0,zIndex:5},
+  header:{display:"flex",justifyContent:"space-between",alignItems:"flex-end",flexWrap:"wrap",gap:16,padding:"26px 28px 18px",borderBottom:"3px solid #367C2B",background:"#fff",position:"sticky",top:0,zIndex:5},
   headerTitle:{display:"flex",flexDirection:"column",gap:8},
   brandPill:{display:"inline-flex",alignItems:"center",alignSelf:"flex-start",background:"#fff",border:"1px solid #367C2B55",borderRadius:12,padding:"7px 11px",boxShadow:"0 1px 3px #0001"},
   brandLogo:{display:"block",height:26,width:"auto"},
@@ -520,13 +520,13 @@ const S = {
   sub:{margin:"8px 0 0",fontSize:13,color:"#555",maxWidth:560},
   tabs:{display:"flex",gap:4,background:"#0000000d",padding:4,borderRadius:12},
   tab:{border:"none",background:"transparent",padding:"8px 16px",borderRadius:9,fontSize:13,fontWeight:600,cursor:"pointer",color:"#555"},
-  tabActive:{background:"#FFDE00",color:"#000",boxShadow:"0 1px 3px #0002"},
+  tabActive:{background:"#367C2B",color:"#fff",boxShadow:"0 1px 3px #0002"},
   tabLink:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#367C2B",color:"#fff",padding:"8px 16px",borderRadius:9,fontSize:13,fontWeight:700,whiteSpace:"nowrap",boxShadow:"0 1px 3px #0002"},
   body:{display:"flex",gap:0,alignItems:"flex-start"},
   sidebar:{width:236,flexShrink:0,padding:"20px 18px",position:"sticky",top:120,maxHeight:"calc(100vh - 120px)",overflowY:"auto"},
   filterBox:{background:"#fff",border:"1px solid #0001",borderRadius:12,marginBottom:10,overflow:"hidden"},
   filterSummary:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,padding:"10px 12px",cursor:"pointer",fontSize:11,fontWeight:800,letterSpacing:"0.08em",textTransform:"uppercase",color:"#333",listStyle:"none"},
-  filterBadge:{fontSize:10,letterSpacing:0,textTransform:"none",background:"#FFDE00",color:"#000",padding:"2px 7px",borderRadius:20,whiteSpace:"nowrap"},
+  filterBadge:{fontSize:10,letterSpacing:0,textTransform:"none",background:"#367C2B",color:"#fff",padding:"2px 7px",borderRadius:20,whiteSpace:"nowrap"},
   filterPanel:{padding:"0 10px 10px",display:"flex",flexDirection:"column",gap:6,maxHeight:240,overflowY:"auto"},
   filterActions:{display:"flex",gap:6,position:"sticky",top:0,background:"#fff",padding:"2px 0 5px",zIndex:1},
   filterAction:{border:"1px solid #367C2B",background:"#fff",color:"#367C2B",borderRadius:8,padding:"5px 8px",fontSize:11,fontWeight:700,cursor:"pointer"},
@@ -548,14 +548,14 @@ const S = {
   cellEmpty:{background:"transparent",border:"none"},
   cellNum:{fontSize:12,fontWeight:800,color:"#555",marginBottom:4},
   cellEvents:{display:"flex",flexDirection:"column",gap:3,overflow:"hidden"},
-  evt:{border:"none",background:"#FFDE0026",borderRadius:5,padding:"3px 6px",cursor:"pointer",display:"flex",flexDirection:"column",textAlign:"left",gap:1},
+  evt:{border:"none",background:"#367C2B26",borderRadius:5,padding:"3px 6px",cursor:"pointer",display:"flex",flexDirection:"column",textAlign:"left",gap:1},
   evtLoc:{fontSize:11,fontWeight:700,color:"#222",lineHeight:1.15,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   evtHora:{fontSize:9.5,fontWeight:700,color:"#367C2B",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   evtFirma:{fontSize:9.5,color:"#777",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   lista:{display:"flex",flexDirection:"column",gap:8,maxWidth:820},
   empty:{padding:40,textAlign:"center",color:"#666",fontSize:14},
   row:{display:"flex",alignItems:"center",gap:16,background:"#fff",border:"1px solid #0001",borderRadius:12,padding:"12px 16px",cursor:"pointer",width:"100%"},
-  rowActive:{borderColor:"#367C2B",background:"#FFDE0026"},
+  rowActive:{borderColor:"#367C2B",background:"#367C2B26"},
   rowDate:{textAlign:"center",width:44,flexShrink:0},
   rowDay:{fontSize:22,fontWeight:800,lineHeight:1},
   rowMon:{fontSize:11,fontWeight:700,textTransform:"uppercase",opacity:.7},
@@ -569,7 +569,7 @@ const S = {
   listCardClose:{border:"1px solid #367C2B",background:"#fff",color:"#367C2B",borderRadius:9,padding:"7px 10px",fontSize:12,fontWeight:700,cursor:"pointer"},
   listCardGrid:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:"12px 16px"},
   tag:{fontSize:10.5,fontWeight:700,padding:"3px 8px",borderRadius:20,whiteSpace:"nowrap"},
-  tagEst:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,border:"1px dashed #000",background:"#FFDE00",color:"#000",whiteSpace:"nowrap"},
+  tagEst:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,border:"1px dashed #14532D",background:"#367C2B",color:"#fff",whiteSpace:"nowrap"},
   tagConf:{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:20,background:"#000",color:"#fff",whiteSpace:"nowrap"},
   mapaWrap:{display:"flex",gap:20,flexWrap:"wrap",alignItems:"flex-start"},
   mapCard:{flex:"1 1 560px",minWidth:300,background:"#fff",border:"1px solid #0001",borderRadius:14,boxShadow:"0 2px 14px #0002",padding:14},
@@ -578,7 +578,7 @@ const S = {
   mapTilesLayer:{position:"absolute",inset:0},
   mapTile:{position:"absolute",userSelect:"none",pointerEvents:"none"},
   staticMarker:{position:"absolute",transform:"translate(-50%,-50%)",width:30,height:30,borderRadius:"50%",border:"2px solid #fff",boxShadow:"0 4px 14px #0005",color:"#fff",fontSize:12,fontWeight:800,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,zIndex:2},
-  staticMarkerActive:{transform:"translate(-50%,-50%) scale(1.18)",boxShadow:"0 0 0 4px #FFDE00,0 6px 18px #0005",zIndex:3},
+  staticMarkerActive:{transform:"translate(-50%,-50%) scale(1.18)",boxShadow:"0 0 0 4px #367C2B,0 6px 18px #0005",zIndex:3},
   mapEmpty:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",color:"#777",fontSize:14,fontWeight:700,background:"#ffffffaa"},
   mapAttribution:{position:"absolute",right:8,bottom:6,background:"#ffffffe6",color:"#555",fontSize:10,padding:"2px 5px",borderRadius:4},
   mapPanel:{width:330,flex:"0 1 330px",background:"#fff",border:"1px solid #0001",borderRadius:14,boxShadow:"0 2px 14px #0002",padding:16,maxHeight:"calc(100vh - 160px)",overflowY:"auto"},
@@ -607,7 +607,7 @@ const S = {
   sourceLink:{color:"#367C2B",fontWeight:700,textDecoration:"none",borderBottom:"1px solid #367C2B55"},
   calendarActions:{display:"flex",gap:10,flexWrap:"wrap",marginTop:20,paddingTop:16,borderTop:"1px solid #0001"},
   calendarBtn:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#367C2B",color:"#fff",fontSize:12.5,fontWeight:700,padding:"9px 12px",borderRadius:10},
-  calendarBtnAlt:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#FFDE00",color:"#000",fontSize:12.5,fontWeight:700,padding:"9px 12px",borderRadius:10,border:"1px solid #000"},
+  calendarBtnAlt:{display:"inline-flex",alignItems:"center",justifyContent:"center",textDecoration:"none",background:"#367C2B",color:"#fff",fontSize:12.5,fontWeight:700,padding:"9px 12px",borderRadius:10,border:"1px solid #14532D"},
   footer:{padding:"18px 28px 30px",fontSize:11,color:"#666",borderTop:"1px solid #0001",lineHeight:1.5},
 };
 
