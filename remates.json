@@ -19,6 +19,7 @@
       "consignatarias.com.ar",
       "laganadera.com.ar",
       "instagram.com/trescolonias.sa",
+      "instagram.com/estancialalucila",
       "rosgan.com.ar",
       "todolecheria.com.ar",
       "FARER 2026",
@@ -349,6 +350,23 @@
       "sourceUrl": "https://e-brangus.com/8-remates-brangus-agosto-2026/marta-carina-miercoles-12-de-agosto-2026/"
     },
     {
+      "id": "lalucila-hersilia-0812",
+      "firma": "Cabaña La Lucila / El Amparo de Mayoraz / Gananor Pujol",
+      "grupo": "Cabañas",
+      "cabana": "34º Remate de Reproductores La Lucila y El Amparo de Mayoraz (65 toros, 240 vientres, 3 caballos criollos)",
+      "fecha": "2026-08-12",
+      "hora": "14:00",
+      "loc": "Hersilia",
+      "prov": "Santa Fe",
+      "lat": -30.01,
+      "lng": -61.85,
+      "tipo": "Reproductores",
+      "modalidad": "Presencial + GananorPujol.com + elrural.com (Sociedad Rural del Noroeste Santafesino, previo almuerzo)",
+      "confianza": "confirmado",
+      "fuente": "instagram.com/estancialalucila",
+      "sourceUrl": "https://www.instagram.com/estancialalucila/"
+    },
+    {
       "id": "eb-015",
       "firma": "e-Brangus / Ganadera Dall'Osso",
       "grupo": "e-Brangus",
@@ -576,6 +594,23 @@
       "confianza": "confirmado",
       "fuente": "angusybrangusdelloret.com.ar / e-brangus.com",
       "sourceUrl": "https://angusybrangusdelloret.com.ar/"
+    },
+    {
+      "id": "lalucila-sancristobal-0902",
+      "firma": "Cabaña La Lucila / El Amparo de Mayoraz / Ganaderos de Ceres",
+      "grupo": "Cabañas",
+      "cabana": "15º Remate Cabañas de San Cristóbal (500 reproductores)",
+      "fecha": "2026-09-02",
+      "hora": "",
+      "loc": "San Cristóbal",
+      "prov": "Santa Fe",
+      "lat": -30.32,
+      "lng": -61.23,
+      "tipo": "Reproductores",
+      "modalidad": "Presencial (Sociedad Rural de San Cristóbal, remata Ganaderos de Ceres)",
+      "confianza": "confirmado",
+      "fuente": "instagram.com/estancialalucila",
+      "sourceUrl": "https://www.instagram.com/estancialalucila/"
     },
     {
       "id": "eb-024",

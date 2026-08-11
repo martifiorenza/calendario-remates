@@ -68,6 +68,6 @@ En GitHub podés editar `remates.json` directo desde el navegador (botón del l�
 
 ## Fuentes de los datos
 
-e-brangus.com · braford.org.ar · angussantalucia.com.ar · angusdigital.com.ar · bellamar.com.ar · pkf.com.ar · cooperativalehmann.coop (PDF calendario 2026) · consignatarias.com.ar · rosgan.com.ar · todolecheria.com.ar · FARER 2026 · exporural.com.ar
+e-brangus.com · braford.org.ar · angussantalucia.com.ar · angusdigital.com.ar · bellamar.com.ar · pkf.com.ar · cooperativalehmann.coop (PDF calendario 2026) · consignatarias.com.ar · instagram.com/estancialalucila · rosgan.com.ar · todolecheria.com.ar · FARER 2026 · exporural.com.ar
 
 Generado: 11/08/2026. Las fechas marcadas “estimado” provienen de recurrencias declaradas o están publicadas a confirmar, y deben validarse con la firma antes de asistir.
