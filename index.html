@@ -49,7 +49,7 @@ const GRUPO_COLOR = {
   "e-Brangus":"#367C2B", "AFA":"#000000", "Pastore":"#367C2B",
   "Charles":"#000000", "Lehmann":"#367C2B", "Rosgan":"#000000",
   "Exposiciones":"#367C2B", "La Ganadera":"#000000", "Tres Colonias":"#367C2B",
-  "Bellamar":"#000000", "Cabañas":"#367C2B",
+  "Bellamar":"#000000", "Cabañas":"#367C2B", "PKF":"#8B4513",
 };
 const SOURCE_URLS = [
   ["e-brangus.com", "https://e-brangus.com/"],
@@ -61,10 +61,11 @@ const SOURCE_URLS = [
   ["todolecheria.com.ar", "https://www.todolecheria.com.ar/"],
   ["exporural.com.ar", "https://www.exporural.com.ar/"],
   ["bellamar.com.ar", "https://www.bellamar.com.ar/remates.php"],
+  ["pkf.com.ar", "https://www.pkf.com.ar/proximos-remates/"],
   ["farer", "https://farer.org.ar/"]
 ];
 const PROV_LIST = ["Buenos Aires","Chaco","Santa Fe","Entre Ríos","Córdoba","Corrientes","Misiones","Formosa","Santiago del Estero"];
-const GRUPOS = ["e-Brangus","Bellamar","Cabañas","AFA","Pastore","Charles","Lehmann","Rosgan","La Ganadera","Tres Colonias","Exposiciones"];
+const GRUPOS = ["e-Brangus","Bellamar","Cabañas","PKF","AFA","Pastore","Charles","Lehmann","Rosgan","La Ganadera","Tres Colonias","Exposiciones"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
 const SUCURSALES = ["AVELLANEDA","CAÑADA DE GOMEZ","CARLOS PELLEGRINI","CERES","CHAJARI","CONCORDIA","LA PAZ","MERCEDES","MORTEROS","OBERA","PARANA","SAN JUSTO","TOTORAS","VICTORIA"];
@@ -341,7 +342,7 @@ function App(){
       )}
 
       <footer style={S.footer}>
-        Datos: <FooterLink label="e-brangus.com" url="https://e-brangus.com/"/> · <FooterLink label="bellamar.com.ar" url="https://www.bellamar.com.ar/remates.php"/> · <FooterLink label="cooperativalehmann.coop" url="https://www.cooperativalehmann.coop/"/> · <FooterLink label="consignatarias.com.ar" url="https://www.consignatarias.com.ar/"/> · <FooterLink label="rosgan.com.ar" url="https://www.rosgan.com.ar/"/> · <FooterLink label="FARER 2026" url="https://farer.org.ar/"/>.
+        Datos: <FooterLink label="e-brangus.com" url="https://e-brangus.com/"/> · <FooterLink label="bellamar.com.ar" url="https://www.bellamar.com.ar/remates.php"/> · <FooterLink label="pkf.com.ar" url="https://www.pkf.com.ar/proximos-remates/"/> · <FooterLink label="cooperativalehmann.coop" url="https://www.cooperativalehmann.coop/"/> · <FooterLink label="consignatarias.com.ar" url="https://www.consignatarias.com.ar/"/> · <FooterLink label="rosgan.com.ar" url="https://www.rosgan.com.ar/"/> · <FooterLink label="FARER 2026" url="https://farer.org.ar/"/>.
       </footer>
     </div>
   );
