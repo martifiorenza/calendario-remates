@@ -69,6 +69,7 @@ const GRUPOS = ["e-Brangus","Bellamar","Cabañas","PKF","AFA","Pastore","Charles
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
 const SUCURSALES = ["AVELLANEDA","CAÑADA DE GOMEZ","CARLOS PELLEGRINI","CERES","CHAJARI","CONCORDIA","LA PAZ","MERCEDES","MORTEROS","OBERA","PARANA","SAN JUSTO","TOTORAS","VICTORIA"];
+const SUCURSAL_LOCATION_OVERRIDES = {"San Cristóbal|Santa Fe":["CERES"]};
 const EVENT_SUCURSALES = {"eb-001":["MERCEDES"],"eb-002":["MERCEDES"],"eb-003":["MORTEROS"],"eb-005":["MERCEDES"],"eb-006":["LA PAZ"],"eb-007":["SAN JUSTO"],"eb-008":["PARANA"],"eb-009":["MERCEDES"],"eb-010":["CERES"],"eb-013":["MORTEROS"],"eb-014":["PARANA"],"eb-016":["CONCORDIA"],"eb-017":["MERCEDES"],"eb-018":["AVELLANEDA"],"eb-018b":["MERCEDES"],"eb-019":["MERCEDES"],"eb-020":["SAN JUSTO"],"eb-021":["MERCEDES"],"eb-022":["SAN JUSTO"],"eb-024":["MERCEDES"],"eb-025":["MERCEDES"],"eb-026":["SAN JUSTO"],"eb-027":["MERCEDES"],"eb-029":["CERES"],"eb-030":["MERCEDES"],"eb-032":["SAN JUSTO"],"eb-033":["AVELLANEDA"],"eb-034":["SAN JUSTO"],"eb-035":["MORTEROS"],"eb-037":["CERES"],"eb-038":["PARANA"],"eb-039":["CERES"],"eb-040":["AVELLANEDA"],"eb-041":["CERES"],"eb-042":["MERCEDES"],"eb-043":["SAN JUSTO"],"eb-045":["MERCEDES"],"eb-046":["AVELLANEDA"],"afa-c01":["TOTORAS"],"afa-c02":["TOTORAS"],"afa-c04":["TOTORAS"],"afa-c06":["CARLOS PELLEGRINI"],"afa-t01":["TOTORAS"],"afa-t02":["TOTORAS"],"afa-t03":["TOTORAS"],"afa-t04":["TOTORAS"],"afa-t05":["TOTORAS"],"afa-t06":["TOTORAS"],"afa-t07":["TOTORAS"],"afa-t08":["TOTORAS"],"afa-r01":["CARLOS PELLEGRINI"],"afa-r02":["CARLOS PELLEGRINI"],"afa-r03":["CARLOS PELLEGRINI"],"pas-01":["CARLOS PELLEGRINI"],"pas-02":["CARLOS PELLEGRINI"],"pas-03":["CARLOS PELLEGRINI"],"pas-04":["CARLOS PELLEGRINI"],"pas-05":["CARLOS PELLEGRINI"],"pas-06":["CARLOS PELLEGRINI"],"pas-07":["CARLOS PELLEGRINI"],"pas-08":["CARLOS PELLEGRINI"],"pas-09":["CARLOS PELLEGRINI"],"cha-01":["CARLOS PELLEGRINI"],"cha-02":["CARLOS PELLEGRINI"],"leh-emi-08a":["SAN JUSTO"],"leh-sdo-08":["SAN JUSTO"],"leh-sua-08":["MORTEROS"],"leh-rom-08":["AVELLANEDA"],"leh-hel-08":["SAN JUSTO"],"leh-fel-08":["SAN JUSTO"],"leh-emi-08b":["SAN JUSTO"],"leh-cen-09":["CAÑADA DE GOMEZ"],"leh-cen-10":["CAÑADA DE GOMEZ"],"leh-cen-11":["CAÑADA DE GOMEZ"],"leh-cen-12":["CAÑADA DE GOMEZ"],"exp-villaguay":["PARANA"],"exp-villaguay-0801":["PARANA"],"exp-villaguay-0802":["PARANA"],"exp-recon":["AVELLANEDA"],"exp-recon-0808":["AVELLANEDA"],"exp-recon-0809":["AVELLANEDA"],"exp-felic":["LA PAZ"],"exp-felic-0809":["LA PAZ"],"exp-feder":["CONCORDIA"],"exp-feder-0814":["CONCORDIA"],"exp-feder-0815":["CONCORDIA"],"exp-feder-0816":["CONCORDIA"],"exp-nogoya":["VICTORIA"],"exp-nogoya-0815":["VICTORIA"],"exp-nogoya-0816":["VICTORIA"],"exp-sanju":["SAN JUSTO"],"exp-hasenkamp":["LA PAZ"],"exp-hasenkamp-0823":["LA PAZ"],"exp-merce":["MERCEDES"],"exp-vera":["AVELLANEDA"],"exp-goya":["MERCEDES"],"exp-conco":["CONCORDIA"],"exp-chaja":["CHAJARI"]};
 const MAP_BOUNDS = { latMin:-39, latMax:-25.7, lngMin:-66, lngMax:-53.3, zoom:6, tileSize:256 };
 Object.assign(EVENT_SUCURSALES, {
@@ -150,6 +151,45 @@ function sourceUrl(r){
   const found=SOURCE_URLS.find(([needle])=>fuente.includes(needle));
   return found ? found[1] : "";
 }
+function pointInRing(lng,lat,ring){
+  let inside=false;
+  for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+    const xi=Number(ring[i][0]), yi=Number(ring[i][1]);
+    const xj=Number(ring[j][0]), yj=Number(ring[j][1]);
+    const intersects=((yi>lat)!==(yj>lat)) && (lng < ((xj-xi)*(lat-yi))/(yj-yi)+xi);
+    if(intersects) inside=!inside;
+  }
+  return inside;
+}
+function pointInPolygon(lng,lat,polygon){
+  if(!polygon || !polygon.length || !pointInRing(lng,lat,polygon[0])) return false;
+  return !polygon.slice(1).some(ring=>pointInRing(lng,lat,ring));
+}
+function featureContainsPoint(feature,lng,lat){
+  const g=feature && feature.geometry;
+  if(!g) return false;
+  if(g.type==="Polygon") return pointInPolygon(lng,lat,g.coordinates);
+  if(g.type==="MultiPolygon") return g.coordinates.some(poly=>pointInPolygon(lng,lat,poly));
+  return false;
+}
+function buildSucursalMap(remates,features){
+  const map={};
+  remates.forEach(r=>{
+    const override=SUCURSAL_LOCATION_OVERRIDES[`${r.loc}|${r.prov}`];
+    if(override){
+      map[r.id]=override;
+      return;
+    }
+    const lat=Number(r.lat), lng=Number(r.lng);
+    if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    const names=features
+      .filter(f=>featureContainsPoint(f,lng,lat))
+      .map(f=>f.properties && f.properties.name)
+      .filter(Boolean);
+    if(names.length) map[r.id]=names;
+  });
+  return map;
+}
 function App(){
   const [REMATES,setRemates]=useState(null);
   const [loadErr,setLoadErr]=useState(null);
@@ -158,18 +198,30 @@ function App(){
   const [fGrupos,setFGrupos]=useState(new Set(GRUPOS));
   const [fProvs,setFProvs]=useState(new Set(PROV_LIST));
   const [fTipos,setFTipos]=useState(new Set());
+  const [sucursalNames,setSucursalNames]=useState(SUCURSALES);
   const [fSucursales,setFSucursales]=useState(new Set(SUCURSALES));
+  const [eventSucursales,setEventSucursales]=useState(EVENT_SUCURSALES);
   const [soloConfirmados,setSoloConfirmados]=useState(false);
   const [sel,setSel]=useState(null);
   const [mapLoc,setMapLoc]=useState(null);
   const [listOpenId,setListOpenId]=useState(null);
 
   useEffect(()=>{
-    fetch("remates.json?v="+Date.now())
-      .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
-      .then(data=>{
+    const v=Date.now();
+    Promise.all([
+      fetch("remates.json?v="+v).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }),
+      fetch("sucursales.geojson?v="+v).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }).catch(()=>null)
+    ])
+      .then(([data,geo])=>{
         const arr = Array.isArray(data) ? data : (data && Array.isArray(data.remates) ? data.remates : null);
         if (!arr) throw new Error("Formato inesperado en remates.json");
+        const features=geo && Array.isArray(geo.features) ? geo.features : [];
+        if(features.length){
+          const names=[...new Set(features.map(f=>f.properties && f.properties.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+          setSucursalNames(names);
+          setFSucursales(new Set(names));
+          setEventSucursales(buildSucursalMap(arr,features));
+        }
         setRemates(arr);
         setFTipos(new Set([...new Set(arr.map(r=>r.tipo))]));
       })
@@ -190,10 +242,9 @@ function App(){
 
   const TIPOS=[...new Set(REMATES.map(r=>r.tipo))].sort();
 
-  const sucursalNames=SUCURSALES;
   const todasSucursales=sucursalNames.length===0 || fSucursales.size===sucursalNames.length;
   const filtrados = REMATES.filter(r => {
-    const pasaSucursal = todasSucursales || (EVENT_SUCURSALES[r.id]||[]).some(s=>fSucursales.has(s));
+    const pasaSucursal = todasSucursales || (eventSucursales[r.id]||[]).some(s=>fSucursales.has(s));
     return fGrupos.has(r.grupo) && fProvs.has(r.prov) && fTipos.has(r.tipo) &&
       (!soloConfirmados || r.confianza==="confirmado") && pasaSucursal;
   });
@@ -303,7 +354,7 @@ function App(){
                           : <span style={S.tagConf}>confirmado</span>}
                       </div>
                     </button>
-                    {open && <ListSummaryCard evento={r} onClose={()=>setListOpenId(null)}/>}
+                    {open && <ListSummaryCard evento={r} sucursales={eventSucursales[r.id]||[]} onClose={()=>setListOpenId(null)}/>}
                   </React.Fragment>
                 );
               })}
@@ -330,7 +381,7 @@ function App(){
               <Field k="Fecha" v={formatFecha(sel)}/>
               <Field k="Hora" v={horaEvento(sel)}/>
               <Field k="Localidad" v={`${sel.loc}, ${sel.prov}`}/>
-              <Field k="Sucursal / zona" v={(EVENT_SUCURSALES[sel.id]||[]).join(", ") || "Fuera de zona"}/>
+              <Field k="Sucursal / zona" v={(eventSucursales[sel.id]||[]).join(", ") || "Fuera de zona"}/>
               <Field k="Firma / mercado" v={sel.firma}/>
               <Field k="Modalidad" v={sel.modalidad}/>
               <Field k="Confianza" v={sel.confianza==="confirmado"?"Confirmado por la fuente":"Estimado por recurrencia — verificar antes de asistir"}/>
@@ -396,7 +447,7 @@ function FooterLink({label,url}){
   return <a href={url} target="_blank" rel="noopener noreferrer" style={S.sourceLink}>{label}</a>;
 }
 
-function ListSummaryCard({evento,onClose}){
+function ListSummaryCard({evento,sucursales,onClose}){
   return (
     <div style={{...S.listCard,borderTop:`4px solid ${GRUPO_COLOR[evento.grupo]}`}}>
       <div style={S.listCardHead}>
@@ -412,7 +463,7 @@ function ListSummaryCard({evento,onClose}){
         <Field k="Localidad" v={`${evento.loc}, ${evento.prov}`}/>
         <Field k="Firma / mercado" v={evento.firma}/>
         <Field k="Modalidad" v={evento.modalidad}/>
-        <Field k="Sucursal / zona" v={(EVENT_SUCURSALES[evento.id]||[]).join(", ") || "Fuera de zona"}/>
+        <Field k="Sucursal / zona" v={sucursales.join(", ") || "Fuera de zona"}/>
       </div>
       <CalendarButtons evento={evento}/>
     </div>
