@@ -58,7 +58,7 @@ Editá `remates.json`. Cada evento es un objeto con esta forma:
 
 Reglas de los campos:
 
-- **`grupo`** debe ser uno de: `e-Brangus`, `Bellamar`, `Cabañas`, `PKF`, `AFA`, `Pastore`, `Charles`, `Lehmann`, `Rosgan`, `La Ganadera`, `Tres Colonias`, `Exposiciones`. Es lo que controla el color y el filtro de firma. (Si agregás un grupo nuevo, avisá para sumarle color.)
+- **`grupo`** debe ser uno de: `e-Brangus`, `Bellamar`, `Cabañas`, `Ganaderos de Ceres`, `PKF`, `AFA`, `Pastore`, `Charles`, `Lehmann`, `Rosgan`, `La Ganadera`, `Tres Colonias`, `Exposiciones`. Es lo que controla el color y el filtro de firma. (Si agregás un grupo nuevo, avisá para sumarle color.)
 - **`prov`** debe ser: `Buenos Aires`, `Chaco`, `Santa Fe`, `Entre Ríos`, `Córdoba`, `Corrientes`, `Misiones`, `Formosa` o `Santiago del Estero`.
 - **`fecha`** en formato `AAAA-MM-DD`.
 - **`confianza`**: `confirmado` (fecha publicada por la fuente) o `estimado` (proyección de recurrencia o fecha publicada a confirmar; se muestra atenuado y con la etiqueta “estimado”).
