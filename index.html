@@ -72,6 +72,7 @@ const GRUPOS = ["e-Brangus","Bellamar","Cabañas","Ganaderos de Ceres","PKF","AF
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
 const SUCURSALES = ["AVELLANEDA","CAÑADA DE GOMEZ","CARLOS PELLEGRINI","CERES","CHAJARI","CONCORDIA","LA PAZ","MERCEDES","MORTEROS","OBERA","PARANA","SAN JUSTO","TOTORAS","VICTORIA"];
+const SUCURSAL_NAME_ALIASES = {"CONCORDIA NUEVO":"CONCORDIA", "PARANA NUEVO":"PARANA"};
 const SUCURSAL_LOCATION_OVERRIDES = {"San Cristóbal|Santa Fe":["CERES"]};
 const EVENT_SUCURSALES = {"eb-001":["MERCEDES"],"eb-002":["MERCEDES"],"eb-003":["MORTEROS"],"eb-005":["MERCEDES"],"eb-006":["LA PAZ"],"eb-007":["SAN JUSTO"],"eb-008":["PARANA"],"eb-009":["MERCEDES"],"eb-010":["CERES"],"eb-013":["MORTEROS"],"eb-014":["PARANA"],"eb-016":["CONCORDIA"],"eb-017":["MERCEDES"],"eb-018":["AVELLANEDA"],"eb-018b":["MERCEDES"],"eb-019":["MERCEDES"],"eb-020":["SAN JUSTO"],"eb-021":["MERCEDES"],"eb-022":["SAN JUSTO"],"eb-024":["MERCEDES"],"eb-025":["MERCEDES"],"eb-026":["SAN JUSTO"],"eb-027":["MERCEDES"],"eb-029":["CERES"],"eb-030":["MERCEDES"],"eb-032":["SAN JUSTO"],"eb-033":["AVELLANEDA"],"eb-034":["SAN JUSTO"],"eb-035":["MORTEROS"],"eb-037":["CERES"],"eb-038":["PARANA"],"eb-039":["CERES"],"eb-040":["AVELLANEDA"],"eb-041":["CERES"],"eb-042":["MERCEDES"],"eb-043":["SAN JUSTO"],"eb-045":["MERCEDES"],"eb-046":["AVELLANEDA"],"afa-c01":["TOTORAS"],"afa-c02":["TOTORAS"],"afa-c04":["TOTORAS"],"afa-c06":["CARLOS PELLEGRINI"],"afa-t01":["TOTORAS"],"afa-t02":["TOTORAS"],"afa-t03":["TOTORAS"],"afa-t04":["TOTORAS"],"afa-t05":["TOTORAS"],"afa-t06":["TOTORAS"],"afa-t07":["TOTORAS"],"afa-t08":["TOTORAS"],"afa-r01":["CARLOS PELLEGRINI"],"afa-r02":["CARLOS PELLEGRINI"],"afa-r03":["CARLOS PELLEGRINI"],"pas-01":["CARLOS PELLEGRINI"],"pas-02":["CARLOS PELLEGRINI"],"pas-03":["CARLOS PELLEGRINI"],"pas-04":["CARLOS PELLEGRINI"],"pas-05":["CARLOS PELLEGRINI"],"pas-06":["CARLOS PELLEGRINI"],"pas-07":["CARLOS PELLEGRINI"],"pas-08":["CARLOS PELLEGRINI"],"pas-09":["CARLOS PELLEGRINI"],"cha-01":["CARLOS PELLEGRINI"],"cha-02":["CARLOS PELLEGRINI"],"leh-emi-08a":["SAN JUSTO"],"leh-sdo-08":["SAN JUSTO"],"leh-sua-08":["MORTEROS"],"leh-rom-08":["AVELLANEDA"],"leh-hel-08":["SAN JUSTO"],"leh-fel-08":["SAN JUSTO"],"leh-emi-08b":["SAN JUSTO"],"leh-cen-09":["CAÑADA DE GOMEZ"],"leh-cen-10":["CAÑADA DE GOMEZ"],"leh-cen-11":["CAÑADA DE GOMEZ"],"leh-cen-12":["CAÑADA DE GOMEZ"],"exp-villaguay":["PARANA"],"exp-villaguay-0801":["PARANA"],"exp-villaguay-0802":["PARANA"],"exp-recon":["AVELLANEDA"],"exp-recon-0808":["AVELLANEDA"],"exp-recon-0809":["AVELLANEDA"],"exp-felic":["LA PAZ"],"exp-felic-0809":["LA PAZ"],"exp-feder":["CONCORDIA"],"exp-feder-0814":["CONCORDIA"],"exp-feder-0815":["CONCORDIA"],"exp-feder-0816":["CONCORDIA"],"exp-nogoya":["VICTORIA"],"exp-nogoya-0815":["VICTORIA"],"exp-nogoya-0816":["VICTORIA"],"exp-sanju":["SAN JUSTO"],"exp-hasenkamp":["LA PAZ"],"exp-hasenkamp-0823":["LA PAZ"],"exp-merce":["MERCEDES"],"exp-vera":["AVELLANEDA"],"exp-goya":["MERCEDES"],"exp-conco":["CONCORDIA"],"exp-chaja":["CHAJARI"]};
 const MAP_BOUNDS = { latMin:-39, latMax:-25.7, lngMin:-66, lngMax:-53.3, zoom:6, tileSize:256 };
@@ -188,8 +189,9 @@ function buildSucursalMap(remates,features){
     const names=features
       .filter(f=>featureContainsPoint(f,lng,lat))
       .map(f=>f.properties && f.properties.name)
+      .map(name=>SUCURSAL_NAME_ALIASES[name] || name)
       .filter(Boolean);
-    if(names.length) map[r.id]=names;
+    if(names.length) map[r.id]=[...new Set(names)];
   });
   return map;
 }
@@ -220,7 +222,7 @@ function App(){
         if (!arr) throw new Error("Formato inesperado en remates.json");
         const features=geo && Array.isArray(geo.features) ? geo.features : [];
         if(features.length){
-          const names=[...new Set(features.map(f=>f.properties && f.properties.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+          const names=[...new Set(features.map(f=>f.properties && f.properties.name).map(name=>SUCURSAL_NAME_ALIASES[name] || name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
           setSucursalNames(names);
           setFSucursales(new Set(names));
           setEventSucursales(buildSucursalMap(arr,features));
