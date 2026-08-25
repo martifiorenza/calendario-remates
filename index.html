@@ -63,6 +63,9 @@ const SOURCE_URLS = [
   ["rosgan.com.ar", "https://www.rosgan.com.ar/"],
   ["todolecheria.com.ar", "https://www.todolecheria.com.ar/"],
   ["exporural.com.ar", "https://www.exporural.com.ar/"],
+  ["angus.org.ar", "https://www.angus.org.ar/auspiciosremates/"],
+  ["angusdigital.com.ar", "https://www.angusdigital.com.ar/revista-angus/calendario-de-remates-de-caba%C3%B1as-y-especiales-angus-2026"],
+  ["braford.org.ar", "https://www.braford.org.ar/calendario-de-remates-auspiciados-2026/"],
   ["bellamar.com.ar", "https://www.bellamar.com.ar/remates.php"],
   ["pkf.com.ar", "https://www.pkf.com.ar/proximos-remates/"],
   ["farer", "https://farer.org.ar/"]
@@ -80,7 +83,12 @@ Object.assign(EVENT_SUCURSALES, {
   "leh-cen-09":["TOTORAS"],
   "leh-cen-10":["TOTORAS"],
   "leh-cen-11":["TOTORAS"],
-  "leh-cen-12":["TOTORAS"]
+  "leh-cen-12":["TOTORAS"],
+  "cab-cerrillo-0819":["VICTORIA"],
+  "cab-mojon-0826":["PARANA"],
+  "cab-bototi-0902":["VICTORIA"],
+  "cab-malaika-0904":["PARANA"],
+  "cab-matilde-0912":["VICTORIA"]
 });
 function mapWorldPixel(lat,lng){
   const n=Math.pow(2,MAP_BOUNDS.zoom)*MAP_BOUNDS.tileSize;
@@ -398,7 +406,7 @@ function App(){
       )}
 
       <footer style={S.footer}>
-        Datos: <FooterLink label="e-brangus.com" url="https://e-brangus.com/"/> · <FooterLink label="bellamar.com.ar" url="https://www.bellamar.com.ar/remates.php"/> · <FooterLink label="pkf.com.ar" url="https://www.pkf.com.ar/proximos-remates/"/> · <FooterLink label="cooperativalehmann.coop" url="https://www.cooperativalehmann.coop/"/> · <FooterLink label="consignatarias.com.ar" url="https://www.consignatarias.com.ar/"/> · <FooterLink label="instagram.com/estancialalucila" url="https://www.instagram.com/estancialalucila/"/> · <FooterLink label="rosgan.com.ar" url="https://www.rosgan.com.ar/"/> · <FooterLink label="FARER 2026" url="https://farer.org.ar/"/>.
+        Datos: <FooterLink label="e-brangus.com" url="https://e-brangus.com/"/> · <FooterLink label="braford.org.ar" url="https://www.braford.org.ar/calendario-de-remates-auspiciados-2026/"/> · <FooterLink label="angus.org.ar" url="https://www.angus.org.ar/auspiciosremates/"/> · <FooterLink label="angusdigital.com.ar" url="https://www.angusdigital.com.ar/revista-angus/calendario-de-remates-de-caba%C3%B1as-y-especiales-angus-2026"/> · <FooterLink label="bellamar.com.ar" url="https://www.bellamar.com.ar/remates.php"/> · <FooterLink label="pkf.com.ar" url="https://www.pkf.com.ar/proximos-remates/"/> · <FooterLink label="cooperativalehmann.coop" url="https://www.cooperativalehmann.coop/"/> · <FooterLink label="consignatarias.com.ar" url="https://www.consignatarias.com.ar/"/> · <FooterLink label="instagram.com/estancialalucila" url="https://www.instagram.com/estancialalucila/"/> · <FooterLink label="rosgan.com.ar" url="https://www.rosgan.com.ar/"/> · <FooterLink label="FARER 2026" url="https://farer.org.ar/"/>.
       </footer>
     </div>
   );
