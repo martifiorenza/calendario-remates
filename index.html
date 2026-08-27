@@ -290,6 +290,7 @@ function App(){
           {[["calendario","Calendario"],["lista","Lista"],["mapa","Mapa"]].map(([k,label])=>(
             <button key={k} onClick={()=>setVista(k)} style={{...S.tab,...(vista===k?S.tabActive:{})}}>{label}</button>
           ))}
+          <a href="cabanas.html" style={S.tabLink}>Cabañas por sucursal</a>
           <a href="Sistemas_Ganaderos_Agronorte_App.html" style={S.tabLink}>Sistemas ganaderos</a>
         </div>
       </header>
