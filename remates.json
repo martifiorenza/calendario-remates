@@ -3729,5 +3729,57 @@
       "fuente": "angus.org.ar",
       "sourceUrl": "https://www.angus.org.ar/auspiciosremates/catalogos-detalle.php?id=1263"
     }
-  ]
+,
+  {
+    "id": "brf-elretiro-0904",
+    "firma": "Guillermo Lehmann",
+    "grupo": "Lehmann",
+    "cabana": "23° Remate de Cabaña El Retiro",
+    "fecha": "2026-09-04",
+    "hora": "",
+    "loc": "San Justo",
+    "prov": "Santa Fe",
+    "lat": -30.789,
+    "lng": -60.591,
+    "tipo": "Reproductores",
+    "modalidad": "Presencial + Streaming",
+    "confianza": "confirmado",
+    "fuente": "braford.org.ar",
+    "sourceUrl": "https://www.braford.org.ar/calendario-de-remates-auspiciados-2026/"
+  },
+  {
+    "id": "brf-cordobra-0912",
+    "firma": "Grimaldi Remates Feria",
+    "grupo": "Cabañas",
+    "cabana": "Cordobra",
+    "fecha": "2026-09-12",
+    "hora": "",
+    "loc": "La Francia",
+    "prov": "Córdoba",
+    "lat": -31.407,
+    "lng": -62.633,
+    "tipo": "Reproductores",
+    "modalidad": "Presencial",
+    "confianza": "confirmado",
+    "fuente": "braford.org.ar",
+    "sourceUrl": "https://www.braford.org.ar/calendario-de-remates-auspiciados-2026/"
+  },
+  {
+    "id": "brf-genetica-formosa-0925",
+    "firma": "Colombo y Magliano",
+    "grupo": "Cabañas",
+    "cabana": "Genética Formosa",
+    "fecha": "2026-09-25",
+    "hora": "",
+    "loc": "Formosa",
+    "prov": "Formosa",
+    "lat": -26.185,
+    "lng": -58.175,
+    "tipo": "Reproductores",
+    "modalidad": "Presencial + Streaming",
+    "confianza": "confirmado",
+    "fuente": "braford.org.ar",
+    "sourceUrl": "https://www.braford.org.ar/calendario-de-remates-auspiciados-2026/"
+  }
+]
 }
